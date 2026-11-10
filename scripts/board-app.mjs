@@ -5,7 +5,7 @@
 import { MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, esc, loc, threatLabel, txt } from "./constants.mjs";
 import { BoardView } from "./board-view.mjs";
 import { cellAt, cellThreat, coords, normalizeBoard } from "./rules.mjs";
-import { createBoard, createSampleBoard } from "./defaults.mjs";
+import { guardActions } from "./errors.mjs";
 import {
   deleteBoard, getActiveBoardId, getBoard, getTerrainMap, getTerrains, listBoards,
   saveBoard, saveTerrains, setActiveBoard
@@ -36,7 +36,8 @@ export class BoardApp extends ApplicationV2 {
     tag: "div",
     window: { title: "CARDATLAS.Title", icon: "fa-solid fa-map", resizable: true },
     position: { width: 1180, height: 800 },
-    actions: {
+    // Every handler reports its errors on screen (see errors.mjs).
+    actions: guardActions({
       tool: BoardApp.#onTool,
       brush: BoardApp.#onBrush,
       peek: BoardApp.#onPeek,
@@ -60,7 +61,7 @@ export class BoardApp extends ApplicationV2 {
       fit: BoardApp.#onFit,
       center: BoardApp.#onCenter,
       cellAction: BoardApp.#onCellAction
-    }
+    })
   };
 
   /** Open (or bring forward) the window. */
@@ -132,6 +133,7 @@ export class BoardApp extends ApplicationV2 {
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    this.#bindActions();
     this.view?.destroy();
     const table = this.element.querySelector(".ca-table");
     this.view = new BoardView(table, {
@@ -147,6 +149,26 @@ export class BoardApp extends ApplicationV2 {
     if ( side ) this.#bindSide(side);
     this.sync({ animate: false });
     this.view.focus();
+  }
+
+  /**
+   * Run this window's `data-action` buttons from a capture listener on its own content.
+   * The handlers are the same ones declared in DEFAULT_OPTIONS.actions; stopping the event
+   * here means Foundry's frame listener never sees it, so each click runs exactly once and
+   * the buttons work even if the frame's action dispatch does not reach them.
+   */
+  #bindActions() {
+    const root = this.element.querySelector(".ca-app");
+    if ( !root ) return;
+    root.addEventListener("click", event => {
+      if ( event.button !== 0 ) return;
+      const target = event.target.closest("[data-action]");
+      if ( !target || !root.contains(target) ) return;
+      const handler = this.options.actions[target.dataset.action];
+      if ( typeof handler !== "function" ) return;
+      event.stopPropagation();
+      handler.call(this, event, target);
+    }, { capture: true });
   }
 
   _onClose(options) {
@@ -497,33 +519,8 @@ export class BoardApp extends ApplicationV2 {
 
   /** @this {BoardApp} */
   static async #onNewBoard() {
-    const content = document.createElement("div");
-    content.className = "card-atlas-dialog";
-    const terrains = getTerrains();
-    content.innerHTML = `
-      <div class="form-group"><label>${esc(loc("New.name"))}</label><input type="text" name="name" value="${esc(loc("New.defaultName"))}" autofocus></div>
-      <div class="form-group"><label>${esc(loc("New.kind"))}</label>
-        <select name="kind"><option value="sample">${esc(loc("New.sample"))}</option><option value="blank">${esc(loc("New.blank"))}</option></select></div>
-      <div class="form-group"><label>${esc(loc("New.cols"))}</label><input type="number" name="cols" value="12" min="2" max="80"></div>
-      <div class="form-group"><label>${esc(loc("New.rows"))}</label><input type="number" name="rows" value="8" min="2" max="80"></div>
-      <div class="form-group"><label>${esc(loc("New.fill"))}</label>
-        <select name="fill">${terrains.map(t => `<option value="${esc(t.id)}" ${t.id === "plains" ? "selected" : ""}>${esc(txt(t.name))}</option>`).join("")}</select></div>
-      <p class="hint">${esc(loc("New.hint"))}</p>`;
-    const data = await DialogV2.input({
-      window: { title: loc("Toolbar.new"), icon: "fa-solid fa-plus" },
-      content,
-      ok: { label: loc("New.create"), icon: "fa-solid fa-check" },
-      rejectClose: false
-    });
-    if ( !data ) return;
-    const name = String(data.name || loc("New.defaultName")).trim();
-    const board = data.kind === "sample"
-      ? createSampleBoard({ name })
-      : createBoard({ name, cols: clampInt(data.cols, 2, 80, 12), rows: clampInt(data.rows, 2, 80, 8), fill: data.fill || "plains" });
-    await saveBoard(board);
-    this.boardId = board.id;
-    if ( !getActiveBoardId() ) await setActiveBoard(board.id);
-    this.sync({ animate: false });
+    const { NewBoardApp } = await import("./new-board.mjs");
+    await NewBoardApp.open();
   }
 
   /** @this {BoardApp} */
@@ -687,9 +684,4 @@ export class BoardApp extends ApplicationV2 {
       case "ping": this.#ping(i, true); break;
     }
   }
-}
-
-function clampInt(value, min, max, fallback) {
-  const n = Math.floor(Number(value));
-  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
 }

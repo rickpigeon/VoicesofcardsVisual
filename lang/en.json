@@ -184,7 +184,7 @@
       "fit": "Show the whole map"
     },
     "Empty": {
-      "gm": "No maps yet. Create the sample map to see everything working.",
+      "gm": "No maps yet. Generate a new map or start from the sample map.",
       "player": "The GM has not shown a map yet."
     },
     "Toolbar": {
@@ -237,16 +237,54 @@
     },
     "Common": { "yes": "Yes", "no": "No", "save": "Save", "delete": "Delete", "up": "Move up", "down": "Move down" },
     "New": {
+      "title": "New map",
       "name": "Name",
       "defaultName": "New map",
-      "kind": "Start with",
-      "sample": "Sample map (16 × 10)",
-      "blank": "Blank map",
+      "kind_generate": "Generate map",
+      "kind_sample": "Sample map",
+      "kind_blank": "Blank",
+      "theme": "Theme",
+      "size": "Size",
+      "size_small": "Small",
+      "size_medium": "Medium",
+      "size_large": "Large",
+      "size_huge": "Huge",
+      "size_custom": "Custom",
       "cols": "Columns",
       "rows": "Rows",
       "fill": "Starting terrain",
-      "hint": "The sample map ignores columns, rows and starting terrain.",
-      "create": "Create"
+      "seed": "Map code",
+      "reroll": "Roll another",
+      "seedHint": "The same code, theme and size always make the same map. Write down the code of a map you like.",
+      "sampleHint": "A ready 16 × 10 map with a village, road, forest, river, sea, dungeon and treasure.",
+      "editHint": "Once created, everything can be edited: paint terrain, rename cards, move the group.",
+      "start": "The group starts in {name}.",
+      "create": "Create map"
+    },
+    "Theme": {
+      "continent": "Continent",
+      "archipelago": "Archipelago",
+      "desert": "Desert",
+      "frozen": "Frozen lands",
+      "wilds": "Wild forest"
+    },
+    "ThemeDesc": {
+      "continent": "Land surrounded by sea, with mountains, forests, rivers and roads linking the villages to a city.",
+      "archipelago": "Islands scattered across the sea. Sea routes link the ports: those sea cards can be crossed.",
+      "desert": "Sand as far as the eye can see, oases, rocky ridges and more ruins than usual.",
+      "frozen": "Frozen wastes, pine forests and a cold sea to the north. Few villages.",
+      "wilds": "Dense woods, jungle to the south, swamps and many rivers. Few villages."
+    },
+    "Gen": {
+      "dungeon1": "A staircase goes down into the dark. The air rising from it is cold and damp.",
+      "dungeon2": "Iron gates stand ajar on a hillside. There are fresh claw marks in the dirt.",
+      "dungeon3": "A tower sunk into the ground, only its top showing. A light flickers inside.",
+      "treasure1": "A half-buried chest bearing the crest of a forgotten noble house.",
+      "treasure2": "A smuggler's cache: bags of coins and a letter with instructions.",
+      "treasure3": "An ancient offering on a stone altar. No one has touched it in centuries.",
+      "ruins1": "The fallen walls of a fortress. Someone camped here not long ago.",
+      "ruins2": "Faceless statues ring an empty square. The wind carries a distant song.",
+      "ruins3": "A temple split in two. Its inscriptions speak of a seal and a key."
     },
     "Confirm": {
       "delete": "Delete the map \"{name}\"? This cannot be undone.",

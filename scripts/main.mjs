@@ -5,10 +5,12 @@ import { MODULE_ID, QUERY_NAME, SOCKET_NAME, loc } from "./constants.mjs";
 import { getActiveBoardId, registerSettings } from "./store.mjs";
 import { handleQuery } from "./engine.mjs";
 import { BoardApp } from "./board-app.mjs";
+import { watchUncaught } from "./errors.mjs";
 
 const WATCHED = new Set(["boards", "activeBoard", "terrains", "options", "movePermission"].map(k => `${MODULE_ID}.${k}`));
 
 Hooks.once("init", () => {
+  watchUncaught();
   registerSettings();
   // Players ask the active GM to move the group or play a hand card.
   CONFIG.queries[QUERY_NAME] = handleQuery;

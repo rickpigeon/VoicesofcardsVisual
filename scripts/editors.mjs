@@ -5,6 +5,7 @@ import { MODULE_ID, OPTION_ACTIONS, THREAT_DIE, THREAT_KEYS, PATH, loc, threatLa
 import { resizeBoard } from "./rules.mjs";
 import { defaultOptions } from "./defaults.mjs";
 import { getBoard, getOptions, getTerrains, mutateBoard, saveOptions, saveTerrains } from "./store.mjs";
+import { guardActions } from "./errors.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -134,11 +135,11 @@ export class TerrainLibraryApp extends HandlebarsApplicationMixin(ApplicationV2)
     window: { title: "CARDATLAS.Terrains.title", icon: "fa-solid fa-mountain-sun", resizable: true },
     position: { width: 860, height: 720 },
     form: { handler: TerrainLibraryApp.#onSubmit, submitOnChange: false, closeOnSubmit: true },
-    actions: {
+    actions: guardActions({
       addRow: TerrainLibraryApp.#onAdd,
       deleteRow: TerrainLibraryApp.#onDelete,
       resetDefaults: TerrainLibraryApp.#onReset
-    }
+    })
   };
 
   static PARTS = {
@@ -181,7 +182,7 @@ export class TerrainLibraryApp extends HandlebarsApplicationMixin(ApplicationV2)
       window: { title: loc("Terrains.reset") }, content: `<p>${loc("Terrains.resetConfirm")}</p>`, rejectClose: false
     });
     if ( !ok ) return;
-    await game.settings.set(MODULE_ID, "terrains", null);
+    await saveTerrains(null);
     this.close();
   }
 
@@ -242,13 +243,13 @@ export class OptionsEditorApp extends HandlebarsApplicationMixin(ApplicationV2) 
     window: { title: "CARDATLAS.Options.title", icon: "fa-solid fa-hand", resizable: true },
     position: { width: 900, height: 760 },
     form: { handler: OptionsEditorApp.#onSubmit, submitOnChange: false, closeOnSubmit: true },
-    actions: {
+    actions: guardActions({
       addRow: OptionsEditorApp.#onAdd,
       deleteRow: OptionsEditorApp.#onDelete,
       moveUp: OptionsEditorApp.#onMoveUp,
       moveDown: OptionsEditorApp.#onMoveDown,
       resetDefaults: OptionsEditorApp.#onReset
-    }
+    })
   };
 
   static PARTS = {

@@ -184,7 +184,7 @@
       "fit": "Ver o mapa inteiro"
     },
     "Empty": {
-      "gm": "Nenhum mapa ainda. Crie o mapa de exemplo para ver tudo funcionando.",
+      "gm": "Nenhum mapa ainda. Gere um mapa novo ou comece pelo mapa de exemplo.",
       "player": "O mestre ainda não mostrou nenhum mapa."
     },
     "Toolbar": {
@@ -237,16 +237,54 @@
     },
     "Common": { "yes": "Sim", "no": "Não", "save": "Salvar", "delete": "Excluir", "up": "Subir", "down": "Descer" },
     "New": {
+      "title": "Novo mapa",
       "name": "Nome",
       "defaultName": "Novo mapa",
-      "kind": "Começar com",
-      "sample": "Mapa de exemplo (16 × 10)",
-      "blank": "Mapa em branco",
+      "kind_generate": "Gerar mapa",
+      "kind_sample": "Mapa de exemplo",
+      "kind_blank": "Em branco",
+      "theme": "Tema",
+      "size": "Tamanho",
+      "size_small": "Pequeno",
+      "size_medium": "Médio",
+      "size_large": "Grande",
+      "size_huge": "Enorme",
+      "size_custom": "Personalizado",
       "cols": "Colunas",
       "rows": "Linhas",
       "fill": "Terreno inicial",
-      "hint": "O mapa de exemplo ignora colunas, linhas e terreno inicial.",
-      "create": "Criar"
+      "seed": "Código do mapa",
+      "reroll": "Sortear outro",
+      "seedHint": "O mesmo código, tema e tamanho geram sempre o mesmo mapa. Anote o código de um mapa que você gostou.",
+      "sampleHint": "Mapa pronto de 16 × 10 com aldeia, estrada, floresta, rio, mar, masmorra e tesouro.",
+      "editHint": "Depois de criado, tudo pode ser editado: pinte terrenos, renomeie cartas, mude o grupo de lugar.",
+      "start": "O grupo começa em {name}.",
+      "create": "Criar mapa"
+    },
+    "Theme": {
+      "continent": "Continente",
+      "archipelago": "Arquipélago",
+      "desert": "Deserto",
+      "frozen": "Terras geladas",
+      "wilds": "Floresta selvagem"
+    },
+    "ThemeDesc": {
+      "continent": "Terra cercada de mar, com montanhas, florestas, rios e estradas ligando as aldeias a uma cidade.",
+      "archipelago": "Ilhas espalhadas no mar. Rotas marítimas ligam os portos: essas cartas de mar podem ser atravessadas.",
+      "desert": "Areia a perder de vista, oásis, serras rochosas e mais ruínas que o normal.",
+      "frozen": "Ermos gelados, florestas de pinheiros e um mar frio ao norte. Poucas aldeias.",
+      "wilds": "Mata fechada, selva ao sul, pântanos e muitos rios. Poucas aldeias."
+    },
+    "Gen": {
+      "dungeon1": "Uma escadaria desce para a escuridão. O ar que sobe é frio e úmido.",
+      "dungeon2": "Portões de ferro entreabertos numa encosta. Há marcas de garras recentes na terra.",
+      "dungeon3": "Uma torre afundada no chão, só o topo aparece. Uma luz pisca lá dentro.",
+      "treasure1": "Um baú meio enterrado, com o brasão de uma casa nobre esquecida.",
+      "treasure2": "O esconderijo de um contrabandista: sacos de moedas e uma carta com instruções.",
+      "treasure3": "Uma oferenda antiga sobre um altar de pedra. Ninguém a toca há séculos.",
+      "ruins1": "Muralhas caídas de uma fortaleza. Alguém acampou aqui há pouco tempo.",
+      "ruins2": "Estátuas sem rosto cercam uma praça vazia. O vento traz um canto distante.",
+      "ruins3": "Um templo partido ao meio. As inscrições falam de um selo e de uma chave."
     },
     "Confirm": {
       "delete": "Excluir o mapa \"{name}\"? Isso não pode ser desfeito.",

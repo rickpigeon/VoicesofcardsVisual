@@ -13,44 +13,33 @@ export function visibleOptions() {
   return getOptions().filter(o => o.enabled && (!o.gmOnly || game.user.isGM));
 }
 
+/**
+ * Dialog content as an HTML string (every user value escaped). Foundry cleans string content,
+ * and all the tags and attributes used here are on its allowed list; a string works in every
+ * v13 and v14 build.
+ */
 function dialogBody(option) {
-  const div = document.createElement("div");
-  div.className = "card-atlas-dialog";
+  const parts = [];
   const desc = txt(option.description);
   if ( desc ) {
-    const p = document.createElement("div");
-    p.className = "ca-dialog-desc";
-    p.innerHTML = desc.split(/\n{2,}/).map(s => `<p>${esc(s).replace(/\n/g, "<br>")}</p>`).join("");
-    div.append(p);
+    const paragraphs = desc.split(/\n{2,}/).map(s => `<p>${esc(s).split("\n").join("<br>")}</p>`).join("");
+    parts.push(`<div class="ca-dialog-desc">${paragraphs}</div>`);
   }
   if ( option.choices?.length ) {
-    const list = document.createElement("div");
-    list.className = "ca-dialog-choices";
-    option.choices.forEach((c, n) => {
+    const items = option.choices.map((c, n) => {
       const cost = txt(c.cost);
       const text = txt(c.text);
-      const label = document.createElement("label");
-      label.className = "ca-dialog-choice";
-      label.innerHTML = `<input type="radio" name="choice" value="${n}" ${n === 0 ? "checked" : ""}>
+      return `<label class="ca-dialog-choice"><input type="radio" name="choice" value="${n}" ${n === 0 ? "checked" : ""}>
         <span><strong>${esc(txt(c.label))}</strong>${cost ? ` <em class="ca-cost">${esc(cost)}</em>` : ""}
-        ${text ? `<small>${esc(text)}</small>` : ""}</span>`;
-      list.append(label);
-    });
-    div.append(list);
+        ${text ? `<small>${esc(text)}</small>` : ""}</span></label>`;
+    }).join("");
+    parts.push(`<div class="ca-dialog-choices">${items}</div>`);
   }
   if ( option.prompt ) {
-    const label = document.createElement("label");
-    label.className = "ca-dialog-prompt";
-    label.innerHTML = `<span>${esc(txt(option.prompt))}</span><textarea name="text" rows="3"></textarea>`;
-    div.append(label);
+    parts.push(`<label class="ca-dialog-prompt"><span>${esc(txt(option.prompt))}</span><textarea name="text" rows="3"></textarea></label>`);
   }
-  if ( option.source ) {
-    const s = document.createElement("p");
-    s.className = "ca-dialog-source";
-    s.textContent = txt(option.source);
-    div.append(s);
-  }
-  return div;
+  if ( option.source ) parts.push(`<p class="ca-dialog-source">${esc(txt(option.source))}</p>`);
+  return `<div class="card-atlas-dialog">${parts.join("")}</div>`;
 }
 
 export async function playOption(boardId, optionId) {
