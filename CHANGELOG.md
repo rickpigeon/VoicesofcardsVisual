@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- **Corrigido:** criar um mapa novo falhava com o erro "Cannot set property state". A janela *Novo mapa* usava o nome `state`, que o Foundry reserva para o estado da janela.
+
 ## 1.0.1
 
 - **Corrigido:** o botão *Novo mapa* não abria nada em alguns mundos. Agora ele abre uma janela própria, que não depende do diálogo padrão do Foundry.
