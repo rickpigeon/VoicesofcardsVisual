@@ -3,10 +3,11 @@
  * the table, the status line and the hand of travel options.
  */
 import {
-  ELEMENTS, ELEMENT_KEYS, MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, confirmButtons, elementLabel, esc, loc, threatLabel, txt
+  ELEMENTS, ELEMENT_KEYS, MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, confirmButtons, elementLabel, esc, loc,
+  manaMessage, threatLabel, txt
 } from "./constants.mjs";
 import { BoardView } from "./board-view.mjs";
-import { PARTY_TOKENS, cellAt, cellThreat, coords, normalizeBoard, travelDie } from "./rules.mjs";
+import { MANA_TEXT_MAX, PARTY_TOKENS, cellAt, cellThreat, coords, normalizeBoard, travelDie } from "./rules.mjs";
 import { canRoll, rollTravelNow, usesLookfar } from "./travel.mjs";
 import { guardActions } from "./errors.mjs";
 import {
@@ -367,7 +368,7 @@ export class BoardApp extends ApplicationV2 {
     const cell = board.cells[i];
     // Same card still selected: refresh the values in place (keeps focus while the GM types).
     const key = `${board.id}:${i}:${cell ? "card" : "empty"}`;
-    if ( key === this._sideFor ) return this.#fillSide(el, cell, terrains);
+    if ( key === this._sideFor ) return this.#fillSide(el, cell, terrains, board);
     this._sideFor = key;
     const { x, y } = coords(board, i);
     if ( !cell ) {
@@ -389,7 +390,10 @@ export class BoardApp extends ApplicationV2 {
         <select name="passable">${opt("", "")}${opt("true", loc("Common.yes"))}${opt("false", loc("Common.no"))}</select></div>
       <div class="ca-field"><label>${esc(loc("Mana.title"))}</label>
         <select name="mana">${opt("", loc("Mana.none"))}${ELEMENT_KEYS.map(k => opt(k, elementLabel(k))).join("")}</select></div>
-      <div class="ca-field ca-check"><label><input type="checkbox" name="manaHidden"> ${esc(loc("Mana.hidden"))}</label></div>
+      <div class="ca-field ca-check" data-mana-only><label><input type="checkbox" name="manaHidden"> ${esc(loc("Mana.hidden"))}</label></div>
+      <div class="ca-field" data-mana-only><label>${esc(loc("Mana.message"))}</label>
+        <textarea name="manaText" rows="3" maxlength="${MANA_TEXT_MAX}"></textarea>
+        <p class="ca-muted ca-mana-hint"></p></div>
       <div class="ca-field"><label>${esc(loc("Cell.text"))}</label><textarea name="text" rows="4" placeholder="${esc(loc("Cell.textHint"))}"></textarea></div>
       <div class="ca-field"><label>${esc(loc("Cell.link"))}</label><input type="text" name="link" placeholder="${esc(loc("Cell.linkHint"))}"></div>
       <div class="ca-field"><label>${esc(loc("Cell.note"))}</label><textarea name="note" rows="3"></textarea></div>
@@ -400,11 +404,11 @@ export class BoardApp extends ApplicationV2 {
       </div>`;
     const picker = foundry.applications.elements.HTMLFilePickerElement.create({ name: "img", value: cell.img ?? "", type: "image" });
     el.querySelector(".ca-img").append(picker);
-    this.#fillSide(el, cell, terrains);
+    this.#fillSide(el, cell, terrains, board);
   }
 
   /** Write the card's values into the panel, skipping the field that has focus. */
-  #fillSide(el, cell, terrains) {
+  #fillSide(el, cell, terrains, board) {
     if ( !cell ) return;
     const terr = terrains.get(cell.terrain);
     const active = el.ownerDocument.activeElement;
@@ -422,8 +426,16 @@ export class BoardApp extends ApplicationV2 {
     set("passable", typeof cell.passable === "boolean" ? String(cell.passable) : "");
     set("mana", cell.mana ?? "");
     set("manaHidden", !!cell.manaHidden);
-    const hiddenBox = el.querySelector('input[name="manaHidden"]');
-    if ( hiddenBox ) hiddenBox.closest(".ca-field").hidden = !cell.mana;
+    set("manaText", cell.manaText ?? "");
+    for ( const field of el.querySelectorAll("[data-mana-only]") ) field.hidden = !cell.mana;
+    const manaBox = el.querySelector('textarea[name="manaText"]');
+    if ( manaBox && cell.mana ) {
+      // The placeholder previews what the chat says when this card has no message of its own.
+      const place = cell.label || txt(terr?.name) || cell.terrain;
+      manaBox.placeholder = manaMessage(board?.config, { ...cell, manaText: "" }, place);
+      const chatOn = board?.config?.manaChat !== false;
+      el.querySelector(".ca-mana-hint").textContent = loc(chatOn ? "Mana.messageHint" : "Mana.chatOff");
+    }
     set("text", txt(cell.text ?? ""));
     set("link", cell.link ?? "");
     set("note", cell.note ?? "");

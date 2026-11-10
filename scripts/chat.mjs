@@ -2,10 +2,11 @@
  * Chat cards: Travel Roll, end of a travel day, first arrival at a card, played travel options.
  * User-written text is escaped; @UUID[...] links still work because chat content is enriched.
  */
-import { ELEMENTS, elementLabel, esc, loc, threatLabel, txt } from "./constants.mjs";
+import { ELEMENTS, esc, loc, manaMessage, threatLabel, txt } from "./constants.mjs";
 import { applyVisibility, visibilityOptions } from "./compat.mjs";
 
 const CM = () => foundry.documents.ChatMessage.implementation;
+const NEWLINE = String.fromCharCode(10);
 
 function paragraphs(text) {
   const clean = String(text ?? "").trim();
@@ -80,8 +81,11 @@ export async function postDayEnd(board, { day, threat, die }) {
 export async function postEnterMessage(board, cell, terrain) {
   const title = cell.label || txt(terrain?.name) || cell.terrain;
   const link = cell.link ? `<p class="ca-link">@UUID[${esc(cell.link)}]</p>` : "";
-  const el = !cell.manaHidden ? ELEMENTS[cell.mana] : null;
-  const mana = el ? `<p class="ca-mana-line" style="--ca-mana:${el.color}"><i class="${el.icon}"></i> ${esc(loc("Chat.mana", { element: elementLabel(cell.mana) }))}</p>` : "";
+  const el = !cell.manaHidden && board.config.manaChat !== false ? ELEMENTS[cell.mana] : null;
+  const manaText = el ? manaMessage(board.config, cell, title) : "";
+  const mana = manaText
+    ? `<p class="ca-mana-line" style="--ca-mana:${el.color}"><i class="${el.icon}"></i> ${esc(manaText).split(NEWLINE).join("<br>")}</p>`
+    : "";
   const content = `<div class="card-atlas-chat ca-enter">
     <header><i class="fa-solid fa-location-dot"></i> ${esc(title)}</header>
     ${paragraphs(txt(cell.text))}${mana}${link}

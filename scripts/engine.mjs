@@ -96,7 +96,7 @@ export async function walk(boardId, x, y, { gm = false } = {}) {
     const firstVisit = !target.visited;
     target.visited = true;
     revealAround(board, x, y, board.config.revealRadius);
-    const feelsMana = !!target.mana && !target.manaHidden;
+    const feelsMana = !!target.mana && !target.manaHidden && board.config.manaChat !== false;
     if ( firstVisit && (target.text || target.link || feelsMana) ) effects.push({ type: "enter", cell: { ...target } });
     await countStep(board, terrains, effects, cellThreat(target, terrains));
     return { ok: true };

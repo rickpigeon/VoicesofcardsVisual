@@ -444,7 +444,12 @@
       "partyColor": "Ring colour",
       "partyScale": "Size",
       "partyLabel": "Name under the token",
-      "partyLabelHint": "Optional, for example the group's name"
+      "partyLabelHint": "Optional, for example the group's name",
+      "manaChat": "Announce mana in chat",
+      "manaChatHint": "The first time the group reaches a card with visible mana, the mana message is posted in the chat.",
+      "manaMessage": "Mana message",
+      "manaMessageHint": "Used for every mana card. Write {element} for the element's name and {place} for the card's name. Leave blank for the default sentence. Below, each element can have its own sentence; each card can have its own in the card panel.",
+      "manaByElement": "Message per element"
     },
     "Terrains": {
       "title": "Terrain library",
@@ -512,7 +517,10 @@
       "none": "None",
       "remove": "Remove mana",
       "hidden": "Only the GM sees the mana",
-      "brush": "Paint latent {element} mana"
+      "brush": "Paint latent {element} mana",
+      "message": "This card's mana message",
+      "messageHint": "Blank uses the board's message (Board settings). {element} and {place} work here.",
+      "chatOff": "Mana chat messages are turned off in Board settings."
     }
   }
 }

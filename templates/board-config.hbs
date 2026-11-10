@@ -82,6 +82,29 @@
       </div>
     </fieldset>
 
+    <fieldset class="ca-mana-fieldset">
+      <legend>{{localize "CARDATLAS.Mana.title"}}</legend>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.manaChat"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.manaChat" {{checked config.manaChat}}></div>
+        <p class="hint">{{localize "CARDATLAS.Config.manaChatHint"}}</p>
+      </div>
+      <div class="form-group ca-mana-general">
+        <label>{{localize "CARDATLAS.Config.manaMessage"}}</label>
+        <div class="form-fields"><textarea name="config.manaMessage" rows="2" maxlength="{{manaMax}}" placeholder="{{manaDefault}}">{{config.manaMessage}}</textarea></div>
+        <p class="hint">{{localize "CARDATLAS.Config.manaMessageHint"}}</p>
+      </div>
+      <details class="ca-mana-elements"{{#if manaByElementOpen}} open{{/if}}>
+        <summary>{{localize "CARDATLAS.Config.manaByElement"}}</summary>
+        {{#each manaElements}}
+        <div class="form-group">
+          <label class="ca-mana-el" style="--ca-mana: {{color}}"><i class="{{icon}}"></i> {{label}}</label>
+          <div class="form-fields"><input type="text" name="config.manaMessages.{{id}}" value="{{value}}" maxlength="{{../manaMax}}" placeholder="{{placeholder}}" data-mana-element="{{id}}"></div>
+        </div>
+        {{/each}}
+      </details>
+    </fieldset>
+
     <fieldset>
       <legend>{{localize "CARDATLAS.Config.travel"}}</legend>
       <div class="form-group">

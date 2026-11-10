@@ -214,7 +214,7 @@
       "dayEndTitle": "Fim do dia {day} de Viagem",
       "dayEndText": "Ameaça do dia: {threat} ({die}). Role o Teste de Viagem pelo botão Rolar no mapa.",
       "rules": "Regra",
-      "mana": "Mana latente de {element} energiza este lugar.",
+      "mana": "Mana latente de {elemento} energiza este lugar.",
       "dayEndPlayers": "Ameaça do dia: {threat}. Um jogador rola o Teste de Viagem ({die}) pelo botão Rolar no mapa. O grupo segue viagem depois do teste."
     },
     "Status": {
@@ -444,7 +444,12 @@
       "partyColor": "Cor do anel",
       "partyScale": "Tamanho",
       "partyLabel": "Nome sob o token",
-      "partyLabelHint": "Opcional, por exemplo o nome do grupo"
+      "partyLabelHint": "Opcional, por exemplo o nome do grupo",
+      "manaChat": "Avisar a mana no chat",
+      "manaChatHint": "Na primeira chegada do grupo a uma carta com mana visível, a mensagem da mana aparece no chat.",
+      "manaMessage": "Mensagem da mana",
+      "manaMessageHint": "Vale para todas as cartas com mana. Use {elemento} para o nome do elemento e {lugar} para o nome da carta. Em branco, usa a frase padrão. Abaixo, cada elemento pode ter a própria frase; cada carta pode ter a sua no painel da carta.",
+      "manaByElement": "Mensagem por elemento"
     },
     "Terrains": {
       "title": "Biblioteca de terrenos",
@@ -512,7 +517,10 @@
       "none": "Nenhuma",
       "remove": "Tirar mana",
       "hidden": "Só o mestre vê a mana",
-      "brush": "Pintar mana latente de {element}"
+      "brush": "Pintar mana latente de {element}",
+      "message": "Mensagem desta mana",
+      "messageHint": "Em branco, usa a mensagem do mapa (Configurar mapa). Aceita {elemento} e {lugar}.",
+      "chatOff": "O aviso de mana no chat está desligado em Configurar mapa."
     }
   }
 }

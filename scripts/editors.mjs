@@ -1,8 +1,11 @@
 /**
  * GM editors: board settings, terrain library, travel options (the players' hand).
  */
-import { MODULE_ID, OPTION_ACTIONS, THREAT_DIE, THREAT_KEYS, PATH, confirmButtons, loc, threatLabel, txt } from "./constants.mjs";
-import { PARTY_FRAMES, PARTY_TOKENS, ROLL_BY, resizeBoard } from "./rules.mjs";
+import {
+  ELEMENTS, ELEMENT_KEYS, MODULE_ID, OPTION_ACTIONS, THREAT_DIE, THREAT_KEYS, PATH, confirmButtons, elementLabel, fillManaText, loc,
+  threatLabel, txt
+} from "./constants.mjs";
+import { MANA_TEXT_MAX, PARTY_FRAMES, PARTY_TOKENS, ROLL_BY, normalizeConfig, resizeBoard } from "./rules.mjs";
 import { defaultOptions } from "./defaults.mjs";
 import { getBoard, getOptions, getTerrains, mutateBoard, saveOptions, saveTerrains } from "./store.mjs";
 import { guardActions, reportError } from "./errors.mjs";
@@ -86,6 +89,15 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
       img: id === "custom" ? (c.partyImg || "") : tokenArt(id)
     }));
     context.frameChoices = Object.fromEntries(PARTY_FRAMES.map(k => [k, loc(`Config.frame_${k}`)]));
+    context.manaMax = MANA_TEXT_MAX;
+    context.manaDefault = loc("Chat.mana");
+    const general = c.manaMessage?.trim() || context.manaDefault;
+    context.manaElements = ELEMENT_KEYS.map(id => ({
+      id, label: elementLabel(id), icon: ELEMENTS[id].icon, color: ELEMENTS[id].color,
+      value: c.manaMessages?.[id] ?? "",
+      placeholder: fillManaText(general, { element: elementLabel(id) })
+    }));
+    context.manaByElementOpen = context.manaElements.some(e => e.value);
     return context;
   }
 
@@ -93,6 +105,23 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
     await super._onRender(context, options);
     bindUuidDrop(this.element, 'input[data-uuid-drop]');
     this.#bindToken();
+    this.#bindMana();
+  }
+
+  /** The per-element fields preview the general message (or the default) while the GM types it. */
+  #bindMana() {
+    const general = this.element.querySelector('[name="config.manaMessage"]');
+    if ( !general ) return;
+    general.addEventListener("input", () => {
+      try {
+        const template = general.value.trim() || loc("Chat.mana");
+        for ( const input of this.element.querySelectorAll("input[data-mana-element]") ) {
+          input.placeholder = fillManaText(template, { element: elementLabel(input.dataset.manaElement) });
+        }
+      } catch ( err ) {
+        reportError(err, "config");
+      }
+    });
   }
 
   /** Token fieldset: live preview, and an Actor dropped on it gives its token image. */
@@ -184,9 +213,14 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
         partyColor: /^#[0-9a-f]{6}$/i.test(String(c.partyColor ?? "")) ? c.partyColor : "#d8b25e",
         partyScale: int(c.partyScale, 50, 200, 100),
         partyLabel: String(c.partyLabel ?? "").trim().slice(0, 40),
+        manaChat: !!c.manaChat,
+        manaMessage: String(c.manaMessage ?? ""),
+        manaMessages: { ...(c.manaMessages ?? {}) },
         backImg: String(c.backImg ?? "").trim(),
         follow: !!c.follow
       });
+      // Trims, length limit and unknown elements are handled in one place.
+      board.config = normalizeConfig(board.config);
       return { ok: true };
     });
   }

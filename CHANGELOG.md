@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0
+
+- **Veneno cor-de-rosa:** a mana latente de veneno agora usa `#D670A0` no brilho, no ícone, nas bolhas, no pincel da paleta e na linha do chat.
+- **Mensagem da mana personalizável:**
+  - **Por carta:** campo *Mensagem desta mana* no painel da carta.
+  - **Por elemento:** *Configurar mapa → Mana latente → Mensagem por elemento*.
+  - **Para o mapa todo:** *Configurar mapa → Mana latente → Mensagem da mana*.
+  - **Marcadores:** `{elemento}` e `{lugar}` viram o nome do elemento e o da carta.
+  - **Prévia:** cada campo mostra, apagado, a frase que vai valer se ficar em branco.
+- **Nova opção *Avisar a mana no chat*:** desmarcada, o mapa deixa de anunciar a mana.
+- **Corrigido:** as opções de mana do painel lateral apareciam também em cartas sem mana.
+
 ## 1.1.0
 
 - **Jogadores rolam o Teste de Viagem.** Nova opção *Quem rola o Teste de Viagem*:

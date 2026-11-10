@@ -24,12 +24,44 @@ export const ELEMENTS = {
   fire: { icon: "fa-solid fa-fire", color: "#ff7a2f" },
   ice: { icon: "fa-solid fa-snowflake", color: "#8fe3ff" },
   light: { icon: "fa-solid fa-sun", color: "#fff1a8" },
-  poison: { icon: "fa-solid fa-skull-crossbones", color: "#86e05a" }
+  poison: { icon: "fa-solid fa-skull-crossbones", color: "#d670a0" }
 };
 export const ELEMENT_KEYS = Object.keys(ELEMENTS);
 
 export function elementLabel(key) {
   return ELEMENTS[key] ? loc(`Element.${key}`) : "";
+}
+
+/** Placeholders the GM can write in a latent mana message; both languages work everywhere. */
+const MANA_FIELDS = { elemento: "element", element: "element", lugar: "place", place: "place" };
+
+/**
+ * Fill {elemento}/{element} and {lugar}/{place} in a mana message.
+ * A `place` of null keeps the place placeholder as it is (for previews without a card).
+ */
+export function fillManaText(template, { element = "", place = null } = {}) {
+  const values = { element, place };
+  return String(template ?? "").replace(/[{]([A-Za-z]+)[}]/g, (match, name) => {
+    const field = MANA_FIELDS[name];
+    if ( !field || values[field] === null ) return match;
+    return String(values[field]);
+  });
+}
+
+/** The board-level mana message for an element: its own text, else the general one, else the default. */
+export function manaTemplate(config, element) {
+  const pick = v => (typeof v === "string" ? v.trim() : "");
+  return pick(config?.manaMessages?.[element]) || pick(config?.manaMessage) || loc("Chat.mana");
+}
+
+/**
+ * The latent mana line of a card: the card's own message, else the board's (see manaTemplate).
+ * Returns "" when the card has no mana.
+ */
+export function manaMessage(config, cell, place = null) {
+  if ( !ELEMENTS[cell?.mana] ) return "";
+  const own = typeof cell.manaText === "string" ? cell.manaText.trim() : "";
+  return fillManaText(own || manaTemplate(config, cell.mana), { element: elementLabel(cell.mana), place });
 }
 
 /** Hand-card actions that the GM client has to execute. */

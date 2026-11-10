@@ -178,6 +178,8 @@
   font-size: 15px;
 }
 .card-atlas-window .ca-field { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+.card-atlas-window .ca-field[hidden] { display: none; }
+.card-atlas-window .ca-mana-hint { margin: 0; font-size: 11px; line-height: 1.35; }
 .card-atlas-window .ca-field > label { color: var(--ca-ink-dim); font-size: 12px; }
 .card-atlas-window .ca-field.ca-check > label { flex-direction: row; display: flex; align-items: center; gap: 6px; color: var(--ca-ink); }
 .card-atlas-window .ca-side input[type="text"],
@@ -1085,8 +1087,20 @@
 /* poison: bubbles rising */
 .card-atlas-window .ca-mana--poison .ca-mana__p {
   width: 7px; height: 7px; top: auto; bottom: 6%; background: none;
-  border: 1.5px solid #c8ff9e; box-shadow: 0 0 5px color-mix(in srgb, var(--ca-mana) 80%, transparent);
+  border: 1.5px solid #ffc7e0; box-shadow: 0 0 5px color-mix(in srgb, var(--ca-mana) 80%, transparent);
   animation-duration: 3s;
+}
+
+/* Board settings: latent mana messages */
+.card-atlas-editor .ca-mana-general textarea { width: 100%; min-height: 48px; resize: vertical; }
+.card-atlas-editor .ca-mana-elements { margin-top: 4px; }
+.card-atlas-editor .ca-mana-elements > summary { cursor: pointer; font-weight: 600; margin: 2px 0 6px; }
+.card-atlas-editor .ca-mana-el { display: inline-flex; align-items: center; gap: 6px; }
+.card-atlas-editor .ca-mana-el i {
+  width: 18px;
+  color: var(--ca-mana);
+  text-align: center;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.7));
 }
 
 /* ==========================================================================

@@ -2,7 +2,7 @@
   "id": "card-atlas",
   "title": "Atlas de Cartas",
   "description": "<p>Exploração em mapa de cartas viradas para baixo: o grupo anda como um só e as cartas giram revelando o terreno. Teste de Viagem e opções de viagem de Fabula Ultima, tudo personalizável pelo mestre.</p><p><em>Card Atlas: explore a map of face-down cards that flip as the group travels. Fabula Ultima travel rules and travel options, fully customizable.</em></p>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "authors": [{ "name": "rickpigeon", "url": "https://github.com/rickpigeon" }],
   "compatibility": { "minimum": "13", "verified": "14" },
   "esmodules": ["scripts/main.mjs"],

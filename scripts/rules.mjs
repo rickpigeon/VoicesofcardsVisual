@@ -4,6 +4,8 @@
  * and in the local preview harness.
  */
 
+import { ELEMENT_KEYS } from "./constants.mjs";
+
 const THREATS = ["minimal", "low", "medium", "high", "veryHigh"];
 const THREAT_DICE = { minimal: 6, low: 8, medium: 10, high: 12, veryHigh: 20 };
 const DICE = [6, 8, 10, 12, 20];
@@ -32,6 +34,9 @@ export function defaultConfig() {
     partyColor: "#d8b25e", // ring colour
     partyScale: 100,       // token size in %
     partyLabel: "",        // name shown under the token
+    manaChat: true,        // first arrival at a visible mana card adds the mana line to the chat
+    manaMessage: "",       // the board's mana message for every element ("" = the default sentence)
+    manaMessages: {},      // a message per element, over manaMessage ({ fire: "...", ... })
     backImg: "",           // custom card back
     follow: true           // camera follows the group
   };
@@ -47,7 +52,22 @@ export function normalizeConfig(raw = {}) {
   const scale = Math.round(Number(c.partyScale));
   c.partyScale = Number.isFinite(scale) ? Math.min(200, Math.max(50, scale)) : 100;
   c.lookfar = !!c.lookfar;
+  c.manaChat = c.manaChat !== false;
+  c.manaMessage = cleanText(c.manaMessage);
+  const byElement = raw.manaMessages && typeof raw.manaMessages === "object" ? raw.manaMessages : {};
+  c.manaMessages = {};
+  for ( const k of ELEMENT_KEYS ) {
+    const text = cleanText(byElement[k]);
+    if ( text ) c.manaMessages[k] = text;
+  }
   return c;
+}
+
+/** Longest mana message kept (a chat line, not a journal page). */
+export const MANA_TEXT_MAX = 600;
+
+function cleanText(value) {
+  return typeof value === "string" ? value.trim().slice(0, MANA_TEXT_MAX) : "";
 }
 
 /* -------------------------------------------- */
@@ -170,6 +190,8 @@ export function compactCell(c) {
   }
   if ( typeof c.passable === "boolean" ) out.passable = c.passable;
   if ( out.mana && c.manaHidden ) out.manaHidden = true;
+  const manaText = cleanText(c.manaText);
+  if ( out.mana && manaText ) out.manaText = manaText;
   return out;
 }
 
