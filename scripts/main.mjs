@@ -6,12 +6,17 @@ import { getActiveBoardId, registerSettings } from "./store.mjs";
 import { handleQuery } from "./engine.mjs";
 import { BoardApp } from "./board-app.mjs";
 import { watchUncaught } from "./errors.mjs";
+import { startLanguage } from "./i18n.mjs";
+import { watchLookfarRolls } from "./lookfar.mjs";
+import { rollTravelNow } from "./travel.mjs";
 
 const WATCHED = new Set(["boards", "activeBoard", "terrains", "options", "movePermission"].map(k => `${MODULE_ID}.${k}`));
 
 Hooks.once("init", () => {
   watchUncaught();
   registerSettings();
+  startLanguage();
+  watchLookfarRolls();
   // Players ask the active GM to move the group or play a hand card.
   CONFIG.queries[QUERY_NAME] = handleQuery;
 
@@ -25,7 +30,8 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   game.socket?.on(SOCKET_NAME, onSocket);
   const module = game.modules.get(MODULE_ID);
-  if ( module ) module.api = { open: openBoard, BoardApp };
+  // api.rollTravel(boardId): the same as the "Rolar" button (for macros).
+  if ( module ) module.api = { open: openBoard, BoardApp, rollTravel: rollTravelNow };
 });
 
 /** Every client re-syncs its window when the stored data changes. */

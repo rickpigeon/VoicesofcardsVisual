@@ -1,13 +1,36 @@
 {
   "CARDATLAS": {
     "Title": "Atlas de Cartas",
-    "Keybinding": { "open": "Abrir o Atlas de Cartas" },
-    "Threat": { "minimal": "Mínimo", "low": "Baixo", "medium": "Médio", "high": "Alto", "veryHigh": "Muito alto" },
+    "Keybinding": {
+      "open": "Abrir o Atlas de Cartas"
+    },
+    "Threat": {
+      "minimal": "Mínimo",
+      "low": "Baixo",
+      "medium": "Médio",
+      "high": "Alto",
+      "veryHigh": "Muito alto"
+    },
     "Terrain": {
-      "village": "Aldeia", "city": "Cidade", "camp": "Refúgio", "road": "Estrada", "plains": "Pradaria",
-      "woods": "Bosque", "hills": "Colinas", "river": "Rio", "forest": "Floresta", "mountain": "Montanha",
-      "sea": "Mar aberto", "swamp": "Pântano", "desert": "Deserto", "tundra": "Ermo gélido", "jungle": "Selva",
-      "volcano": "Vulcão", "ruins": "Ruínas", "dungeon": "Masmorra", "treasure": "Tesouro"
+      "village": "Aldeia",
+      "city": "Cidade",
+      "camp": "Refúgio",
+      "road": "Estrada",
+      "plains": "Pradaria",
+      "woods": "Bosque",
+      "hills": "Colinas",
+      "river": "Rio",
+      "forest": "Floresta",
+      "mountain": "Montanha",
+      "sea": "Mar aberto",
+      "swamp": "Pântano",
+      "desert": "Deserto",
+      "tundra": "Ermo gélido",
+      "jungle": "Selva",
+      "volcano": "Vulcão",
+      "ruins": "Ruínas",
+      "dungeon": "Masmorra",
+      "treasure": "Tesouro"
     },
     "TerrainDesc": {
       "village": "Assentamento. Dá para descansar em estalagem e reabastecer PI.",
@@ -31,29 +54,49 @@
       "treasure": "Ponto de interesse: algo de valor."
     },
     "Cost": {
-      "ip4": "4 PI", "ip3": "3 PI", "ip2": "2 PI", "z5": "5 z", "z10": "10 z", "z20": "20 z", "z40": "40 z",
-      "z10ip": "10 z por PI", "fp1": "1 PF"
+      "ip4": "4 PI",
+      "ip3": "3 PI",
+      "ip2": "2 PI",
+      "z5": "5 z",
+      "z10": "10 z",
+      "z20": "20 z",
+      "z40": "40 z",
+      "z10ip": "10 z por PI",
+      "fp1": "1 PF"
     },
-    "Source": { "house": "Regra da casa" },
+    "Source": {
+      "house": "Regra da casa"
+    },
     "Opt": {
       "rest": {
         "name": "Descansar",
         "desc": "O grupo descansa de 4 a 6 horas. Cada PJ recupera todos os PV e PM e se livra de todas as condições.\nNos ermos é preciso uma barraca mágica, a hospitalidade de alguém ou um local seguro; em assentamentos, um quarto de estalagem ou hospitalidade.\nAo fim da cena de descanso, cada PJ pode criar um Laço, somar uma emoção a um Laço ou trocar uma emoção. Ameaças imediatas podem avançar enquanto vocês descansam.",
-        "tent": "Barraca mágica", "tentText": "Criada com 4 PI de um só personagem. Cabe o grupo todo.",
-        "hosp": "Hospitalidade", "hospText": "Alguém amigável acolhe o grupo, em geral em troca de ajuda ou dinheiro.",
-        "safe": "Local seguro", "safeText": "Um lugar sem risco de ataque: templo consagrado, sala secreta, círculo mágico...",
-        "inn1": "Estalagem (aldeia)", "inn1Text": "Por pessoa, por noite.",
-        "inn2": "Estalagem (vila)", "inn2Text": "Por pessoa, por noite.",
-        "inn3": "Estalagem (cidade)", "inn3Text": "Por pessoa, por noite."
+        "tent": "Barraca mágica",
+        "tentText": "Criada com 4 PI de um só personagem. Cabe o grupo todo.",
+        "hosp": "Hospitalidade",
+        "hospText": "Alguém amigável acolhe o grupo, em geral em troca de ajuda ou dinheiro.",
+        "safe": "Local seguro",
+        "safeText": "Um lugar sem risco de ataque: templo consagrado, sala secreta, círculo mágico...",
+        "inn1": "Estalagem (aldeia)",
+        "inn1Text": "Por pessoa, por noite.",
+        "inn2": "Estalagem (vila)",
+        "inn2Text": "Por pessoa, por noite.",
+        "inn3": "Estalagem (cidade)",
+        "inn3Text": "Por pessoa, por noite."
       },
       "item": {
         "name": "Usar item de inventário",
         "desc": "Gaste PI de um único personagem para criar o item na mochila e usá-lo na hora. Nada fica guardado para depois.",
-        "elixir": "Elixir", "elixirText": "Uma criatura recupera 50 PM.",
-        "remedy": "Remédio", "remedyText": "Uma criatura recupera 50 PV.",
-        "tonic": "Tônico", "tonicText": "Uma criatura se recupera de todas as condições.",
-        "shard": "Fragmento elemental", "shardText": "10 de dano de ar, fogo, gelo, raio ou terra em uma criatura que você possa ver.",
-        "tent": "Barraca mágica", "tentText": "Permite que o grupo descanse nos ermos."
+        "elixir": "Elixir",
+        "elixirText": "Uma criatura recupera 50 PM.",
+        "remedy": "Remédio",
+        "remedyText": "Uma criatura recupera 50 PV.",
+        "tonic": "Tônico",
+        "tonicText": "Uma criatura se recupera de todas as condições.",
+        "shard": "Fragmento elemental",
+        "shardText": "10 de dano de ar, fogo, gelo, raio ou terra em uma criatura que você possa ver.",
+        "tent": "Barraca mágica",
+        "tentText": "Permite que o grupo descanse nos ermos."
       },
       "restock": {
         "name": "Reabastecer PI",
@@ -63,9 +106,12 @@
       "services": {
         "name": "Serviços de viagem",
         "desc": "Passagem para viajar por um dia, por pessoa. O preço e a disponibilidade dependem do mundo, e um meio de transporte pode aumentar a distância de um dia de Viagem.",
-        "land": "Terrestre", "landText": "Por pessoa, por dia.",
-        "water": "Aquática", "waterText": "Por pessoa, por dia.",
-        "air": "Aérea", "airText": "Por pessoa, por dia."
+        "land": "Terrestre",
+        "landText": "Por pessoa, por dia.",
+        "water": "Aquática",
+        "waterText": "Por pessoa, por dia.",
+        "air": "Aérea",
+        "airText": "Por pessoa, por dia."
       },
       "newPlace": {
         "name": "Novo lugar no mapa",
@@ -83,21 +129,36 @@
       "camp": {
         "name": "Atividade de acampamento",
         "desc": "Regra opcional. Em cada cena de descanso, cada PJ faz uma das duas atividades que possui e aplica o benefício ao alvo. Benefícios de \"uma vez\" valem até o próximo descanso.",
-        "combat": "Aulas de Combate", "combatText": "Um aliado: uma vez, soma +4 a um teste de Precisão ou de Magia ofensiva.",
-        "magic": "Aulas de Magia", "magicText": "Um aliado: uma vez, lança um feitiço que você conhece, pagando o custo e fazendo os testes.",
-        "carto": "Cartografia", "cartoText": "Você: uma vez, rola de novo um teste de Viagem do grupo e fica com o novo resultado.",
-        "harvest": "Colheita", "harvestText": "Um gourmet: role 1d6. 1: conflito fácil ao fim do descanso; 2: 2 ingredientes aleatórios; 3-5: 3 aleatórios; 6: 3 à escolha.",
-        "owl": "Corujão", "owlText": "Você: gera 3 pontos de progresso para um projeto.",
-        "daydream": "Devaneio", "daydreamText": "Você: uma vez, ao perder PV, perde só a metade.",
-        "exercise": "Exercícios", "exerciseText": "Você: uma vez, evita todas as condições que sofreria de uma mesma fonte.",
-        "scout": "Exploração", "scoutText": "Você ou um aliado: role 1d6. 1: você recupera só metade dos PV e PM; 2: o alvo recupera 2 PI; 3-5: 3 PI; 6: 3 PI e você acha 50 × seu nível em zênites.",
-        "forge": "Forja de Acampamento", "forgeText": "Você: conserta um item do grupo, cria uma arma, armadura ou escudo básico sem pagar, ou desmonta um equipamento em material.",
-        "massage": "Massagem", "massageText": "Um aliado: uma vez, paga metade do custo de PM (não vale para rituais).",
-        "pep": "Mensagem Motivacional", "pepText": "Um aliado: uma vez, dobra os PM que recuperar.",
-        "plan": "Planejamento", "planText": "Um aliado: uma vez, +4 ao liderar um teste em grupo ou ao examinar algo ou alguém.",
-        "double": "Porção Dupla", "doubleText": "Um aliado: uma vez, dobra os PV que recuperar.",
-        "sleep": "Sono Profundo", "sleepText": "Você: uma vez, uma ação extra no seu turno (Equipamento, Impedimento ou Inventário).",
-        "martial": "Treinamento Marcial", "martialText": "Você: uma vez, ao atacar, ganha multi (2) ou +1 no multi."
+        "combat": "Aulas de Combate",
+        "combatText": "Um aliado: uma vez, soma +4 a um teste de Precisão ou de Magia ofensiva.",
+        "magic": "Aulas de Magia",
+        "magicText": "Um aliado: uma vez, lança um feitiço que você conhece, pagando o custo e fazendo os testes.",
+        "carto": "Cartografia",
+        "cartoText": "Você: uma vez, rola de novo um teste de Viagem do grupo e fica com o novo resultado.",
+        "harvest": "Colheita",
+        "harvestText": "Um gourmet: role 1d6. 1: conflito fácil ao fim do descanso; 2: 2 ingredientes aleatórios; 3-5: 3 aleatórios; 6: 3 à escolha.",
+        "owl": "Corujão",
+        "owlText": "Você: gera 3 pontos de progresso para um projeto.",
+        "daydream": "Devaneio",
+        "daydreamText": "Você: uma vez, ao perder PV, perde só a metade.",
+        "exercise": "Exercícios",
+        "exerciseText": "Você: uma vez, evita todas as condições que sofreria de uma mesma fonte.",
+        "scout": "Exploração",
+        "scoutText": "Você ou um aliado: role 1d6. 1: você recupera só metade dos PV e PM; 2: o alvo recupera 2 PI; 3-5: 3 PI; 6: 3 PI e você acha 50 × seu nível em zênites.",
+        "forge": "Forja de Acampamento",
+        "forgeText": "Você: conserta um item do grupo, cria uma arma, armadura ou escudo básico sem pagar, ou desmonta um equipamento em material.",
+        "massage": "Massagem",
+        "massageText": "Um aliado: uma vez, paga metade do custo de PM (não vale para rituais).",
+        "pep": "Mensagem Motivacional",
+        "pepText": "Um aliado: uma vez, dobra os PM que recuperar.",
+        "plan": "Planejamento",
+        "planText": "Um aliado: uma vez, +4 ao liderar um teste em grupo ou ao examinar algo ou alguém.",
+        "double": "Porção Dupla",
+        "doubleText": "Um aliado: uma vez, dobra os PV que recuperar.",
+        "sleep": "Sono Profundo",
+        "sleepText": "Você: uma vez, uma ação extra no seu turno (Equipamento, Impedimento ou Inventário).",
+        "martial": "Treinamento Marcial",
+        "martialText": "Você: uma vez, ao atacar, ganha multi (2) ou +1 no multi."
       }
     },
     "Sample": {
@@ -112,11 +173,24 @@
         "all": "Qualquer jogador",
         "gm": "Só o mestre"
       },
-      "flipSound": { "name": "Som de virar carta", "hint": "Caminho do arquivo de áudio. Deixe vazio para não tocar som." },
-      "volume": { "name": "Volume do som das cartas", "hint": "Vale só para este navegador." },
-      "autoOpen": { "name": "Abrir o mapa quando o mestre mostrar", "hint": "Abre o mapa sozinho quando o mestre clica em Mostrar aos jogadores." }
+      "flipSound": {
+        "name": "Som de virar carta",
+        "hint": "Caminho do arquivo de áudio. Deixe vazio para não tocar som."
+      },
+      "volume": {
+        "name": "Volume do som das cartas",
+        "hint": "Vale só para este navegador."
+      },
+      "autoOpen": {
+        "name": "Abrir o mapa quando o mestre mostrar",
+        "hint": "Abre o mapa sozinho quando o mestre clica em Mostrar aos jogadores."
+      }
     },
-    "Outcome": { "danger": "Perigo!", "discovery": "Descoberta!", "calm": "Viagem tranquila" },
+    "Outcome": {
+      "danger": "Perigo!",
+      "discovery": "Descoberta!",
+      "calm": "Viagem tranquila"
+    },
     "OutcomeHint": {
       "danger": "O mestre descreve um perigo. O grupo pode evitá-lo com um teste em grupo, uma série de testes ou, raramente, um conflito.",
       "discovery": "O grupo faz uma descoberta inesperada. Descobertas são sempre boas.",
@@ -131,12 +205,17 @@
       "practical": "Prático: o Andarilho recupera {n} PI.",
       "dangerTitle": "Perigo: lembrete do mestre",
       "dangerHow": "O perigo deve poder ser evitado com um teste em grupo ou uma série de testes; raramente vira conflito. Dano pelo nível do grupo (LB p. 108):",
-      "level": "Nível", "dmgWeak": "Fraco", "dmgStrong": "Forte", "dmgIntense": "Intenso",
+      "level": "Nível",
+      "dmgWeak": "Fraco",
+      "dmgStrong": "Forte",
+      "dmgIntense": "Intenso",
       "dangerLocked": "O grupo fica parado até você liberar o movimento (cadeado na barra do mapa).",
       "dangerFree": "O movimento continua liberado.",
       "dayEndTitle": "Fim do dia {day} de Viagem",
-      "dayEndText": "Ameaça do dia: {threat}. Role o Teste de Viagem pela barra do mapa quando quiser.",
-      "rules": "Regra"
+      "dayEndText": "Ameaça do dia: {threat} ({die}). Role o Teste de Viagem pelo botão Rolar no mapa.",
+      "rules": "Regra",
+      "mana": "Mana latente de {element} energiza este lugar.",
+      "dayEndPlayers": "Ameaça do dia: {threat}. Um jogador rola o Teste de Viagem ({die}) pelo botão Rolar no mapa. O grupo segue viagem depois do teste."
     },
     "Status": {
       "day": "Dia {day}",
@@ -144,7 +223,9 @@
       "threat": "Ameaça: {threat} ({die})",
       "last": "Último teste: {total} em {die}, {outcome}",
       "locked": "Grupo parado",
-      "pending": "Teste pendente do dia {day}"
+      "rollNow": "Rolar o Teste de Viagem do dia {day} ({die})",
+      "gmWillRoll": "Dia {day}: o mestre vai rolar o Teste de Viagem",
+      "lookfarWait": "Esperando a rolagem de {name} no Lookfar"
     },
     "Reason": {
       "noGM": "É preciso um mestre conectado.",
@@ -163,7 +244,11 @@
       "notGM": "Pedido recusado.",
       "noUser": "Pedido recusado.",
       "unknownAction": "Pedido recusado.",
-      "error": "Algo deu errado. Veja o console (F12)."
+      "error": "Algo deu errado. Veja o console (F12).",
+      "rollPending": "Falta o Teste de Viagem do dia. Rolem antes de seguir viagem.",
+      "noPending": "Não há Teste de Viagem pendente.",
+      "gmRolls": "Neste mapa, quem rola o Teste de Viagem é o mestre.",
+      "badDie": "Essa rolagem não corresponde ao dado do dia."
     },
     "Notify": {
       "noGM": "É preciso um mestre conectado.",
@@ -174,9 +259,13 @@
       "imported": "Mapa importado: {name}",
       "importFailed": "Arquivo inválido. Use um JSON exportado pelo Atlas de Cartas.",
       "shown": "Mapa mostrado aos jogadores.",
-      "shownPlayer": "O mestre mostrou um mapa. Abra pelo botão de mapa nos controles de token."
+      "shownPlayer": "O mestre mostrou um mapa. Abra pelo botão de mapa nos controles de token.",
+      "noActorImage": "Esse ator não tem imagem de token."
     },
-    "Hand": { "title": "Opções de viagem", "play": "Usar" },
+    "Hand": {
+      "title": "Opções de viagem",
+      "play": "Usar"
+    },
     "View": {
       "zoomIn": "Aproximar (+)",
       "zoomOut": "Afastar (−)",
@@ -235,7 +324,15 @@
       "ping": "Apontar",
       "remove": "Remover carta"
     },
-    "Common": { "yes": "Sim", "no": "Não", "save": "Salvar", "delete": "Excluir", "up": "Subir", "down": "Descer" },
+    "Common": {
+      "yes": "Sim",
+      "no": "Não",
+      "save": "Salvar",
+      "delete": "Excluir",
+      "up": "Subir",
+      "down": "Descer",
+      "cancel": "Cancelar"
+    },
     "New": {
       "title": "Novo mapa",
       "name": "Nome",
@@ -259,7 +356,14 @@
       "sampleHint": "Mapa pronto de 16 × 10 com aldeia, estrada, floresta, rio, mar, masmorra e tesouro.",
       "editHint": "Depois de criado, tudo pode ser editado: pinte terrenos, renomeie cartas, mude o grupo de lugar.",
       "start": "O grupo começa em {name}.",
-      "create": "Criar mapa"
+      "create": "Criar mapa",
+      "start_title": "Início do grupo",
+      "start_village": "Numa aldeia sorteada",
+      "start_city": "Na cidade",
+      "start_pick": "Na carta escolhida",
+      "startVillage": "Fundar uma aldeia na carta escolhida",
+      "startHint": "Clique numa carta da prévia para escolher onde o grupo começa.",
+      "startChosen": "Escolhida: coluna {x}, linha {y}."
     },
     "Theme": {
       "continent": "Continente",
@@ -301,7 +405,7 @@
       "size": "Tamanho (colunas × linhas)",
       "sizeHint": "Aumentar cria cartas de pradaria; diminuir apaga as cartas que ficarem de fora.",
       "tilt": "Inclinação da mesa",
-      "partyImg": "Imagem do grupo",
+      "partyImg": "Imagem própria",
       "backImg": "Verso das cartas",
       "follow": "Câmera segue o grupo",
       "exploration": "Exploração",
@@ -311,8 +415,6 @@
       "travel": "Viagem (LB p. 106)",
       "movesPerDay": "Cartas por dia de Viagem",
       "movesPerDayHint": "Quantas cartas o grupo anda em um dia de Viagem. O teste usa a maior ameaça entre as cartas do dia.",
-      "autoRoll": "Rolar o Teste de Viagem sozinho",
-      "autoRollHint": "Desligado: ao fim do dia o mestre recebe um aviso e rola pela barra do mapa.",
       "lockOnDanger": "Perigo para o grupo",
       "lockOnDangerHint": "Num perigo, o grupo só volta a andar quando o mestre liberar.",
       "messageMode": "Quem vê o Teste de Viagem",
@@ -323,7 +425,26 @@
       "wayfarerHint": "Marque o que algum PJ tem (LB p. 176-177).",
       "veteran": "Viajante Experiente (dado um passo menor, mínimo d6)",
       "treasureHunter": "Caçador de Tesouros (descoberta com NP + 1 ou menos)",
-      "practical": "Prático (lembrete: recupera NP PI após cada teste)"
+      "practical": "Prático (lembrete: recupera NP PI após cada teste)",
+      "rollBy": "Quem rola o Teste de Viagem",
+      "rollBy_auto": "Automático, ao fim de cada dia",
+      "rollBy_gm": "O mestre",
+      "rollBy_players": "Os jogadores",
+      "rollByHint": "Com o mestre ou os jogadores, ao fim do dia aparece o botão Rolar na linha de status do mapa, e o grupo só segue viagem depois do teste. O mestre sempre pode rolar.",
+      "lookfar": "Rolar pelo Lookfar",
+      "lookfarHint": "Abre o Teste de Viagem do módulo Lookfar já com o dado do dia. A rolagem do Lookfar vale para o mapa, e ele gera o perigo ou a descoberta. Use com O mestre ou Os jogadores em Quem rola.",
+      "lookfarMissing": "O módulo Lookfar não está ativo neste mundo. Com esta opção marcada, o mapa continua usando o próprio Teste de Viagem.",
+      "tablePlaceholder": "UUID da tabela (arraste uma tabela)",
+      "token": "Token do grupo",
+      "actorDrop": "Arraste um ator para cá para usar o token dele",
+      "partyFrame": "Moldura",
+      "frame_ring": "Anel (redondo)",
+      "frame_none": "Sem moldura",
+      "partyFrameHint": "Sem moldura mostra a imagem como ela é, bom para tokens com fundo transparente.",
+      "partyColor": "Cor do anel",
+      "partyScale": "Tamanho",
+      "partyLabel": "Nome sob o token",
+      "partyLabelHint": "Opcional, por exemplo o nome do grupo"
     },
     "Terrains": {
       "title": "Biblioteca de terrenos",
@@ -366,6 +487,32 @@
       "reroll": "Rolar de novo o último teste",
       "reveal": "Virar cartas ao redor",
       "macro": "Executar macro"
+    },
+    "Token": {
+      "party": "Grupo",
+      "banner": "Estandarte",
+      "caravan": "Caravana",
+      "ship": "Navio",
+      "airship": "Aeronave",
+      "compass": "Bússola",
+      "custom": "Imagem própria"
+    },
+    "Element": {
+      "air": "Ar",
+      "bolt": "Raio",
+      "dark": "Trevas",
+      "earth": "Terra",
+      "fire": "Fogo",
+      "ice": "Gelo",
+      "light": "Luz",
+      "poison": "Veneno"
+    },
+    "Mana": {
+      "title": "Mana latente",
+      "none": "Nenhuma",
+      "remove": "Tirar mana",
+      "hidden": "Só o mestre vê a mana",
+      "brush": "Pintar mana latente de {element}"
     }
   }
 }

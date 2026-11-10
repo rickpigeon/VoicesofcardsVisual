@@ -1,11 +1,14 @@
 /**
  * GM editors: board settings, terrain library, travel options (the players' hand).
  */
-import { MODULE_ID, OPTION_ACTIONS, THREAT_DIE, THREAT_KEYS, PATH, loc, threatLabel, txt } from "./constants.mjs";
-import { resizeBoard } from "./rules.mjs";
+import { MODULE_ID, OPTION_ACTIONS, THREAT_DIE, THREAT_KEYS, PATH, confirmButtons, loc, threatLabel, txt } from "./constants.mjs";
+import { PARTY_FRAMES, PARTY_TOKENS, ROLL_BY, resizeBoard } from "./rules.mjs";
 import { defaultOptions } from "./defaults.mjs";
 import { getBoard, getOptions, getTerrains, mutateBoard, saveOptions, saveTerrains } from "./store.mjs";
-import { guardActions } from "./errors.mjs";
+import { guardActions, reportError } from "./errors.mjs";
+import { lookfarActive } from "./lookfar.mjs";
+
+const tokenArt = id => `${PATH}/assets/tokens/${id}.svg`;
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -75,12 +78,77 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
     context.revealChoices = { 0: "0", 1: "1", 2: "2", 3: "3" };
     context.hunterChoices = { 0: loc("Config.none"), 1: "NP 1", 2: "NP 2" };
     context.practicalChoices = { 0: loc("Config.none"), 1: "NP 1", 2: "NP 2", 3: "NP 3", 4: "NP 4" };
+    context.rollByChoices = Object.fromEntries(ROLL_BY.map(k => [k, loc(`Config.rollBy_${k}`)]));
+    context.lookfarActive = lookfarActive();
+    const c = context.config;
+    context.tokenChoices = PARTY_TOKENS.map(id => ({
+      id, label: loc(`Token.${id}`), selected: c.partyToken === id,
+      img: id === "custom" ? (c.partyImg || "") : tokenArt(id)
+    }));
+    context.frameChoices = Object.fromEntries(PARTY_FRAMES.map(k => [k, loc(`Config.frame_${k}`)]));
     return context;
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
     bindUuidDrop(this.element, 'input[data-uuid-drop]');
+    this.#bindToken();
+  }
+
+  /** Token fieldset: live preview, and an Actor dropped on it gives its token image. */
+  #bindToken() {
+    const form = this.element;
+    const zone = form.querySelector("[data-actor-drop]");
+    if ( !zone ) return;
+    const refresh = () => {
+      try { this.#previewToken(); } catch ( err ) { reportError(err, "config"); }
+    };
+    form.addEventListener("change", refresh);
+    form.addEventListener("input", refresh);
+    zone.addEventListener("dragover", ev => { ev.preventDefault(); zone.classList.add("is-over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("is-over"));
+    zone.addEventListener("drop", async ev => {
+      ev.preventDefault();
+      zone.classList.remove("is-over");
+      try {
+        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(ev);
+        const doc = data?.uuid ? await foundry.utils.fromUuid(data.uuid) : null;
+        const actor = doc?.documentName === "Actor" ? doc : (doc?.actor ?? null);
+        const src = actor?.prototypeToken?.texture?.src || actor?.img || doc?.texture?.src || "";
+        if ( !src ) return ui.notifications.warn(loc("Notify.noActorImage"));
+        const picker = form.querySelector('[name="config.partyImg"]');
+        picker.value = src;
+        const custom = form.querySelector('input[name="config.partyToken"][value="custom"]');
+        if ( custom ) custom.checked = true;
+        if ( actor?.name && !form.querySelector('[name="config.partyLabel"]').value ) {
+          form.querySelector('[name="config.partyLabel"]').value = actor.name;
+        }
+        refresh();
+      } catch ( err ) {
+        reportError(err, "config");
+      }
+    });
+    refresh();
+  }
+
+  #previewToken() {
+    const form = this.element;
+    const val = name => form.querySelector(`[name="config.${name}"]`)?.value ?? "";
+    const preset = form.querySelector('input[name="config.partyToken"]:checked')?.value ?? "party";
+    const img = preset === "custom" ? (val("partyImg") || tokenArt("party")) : tokenArt(preset);
+    const pawn = form.querySelector(".ca-token-preview .ca-pawn");
+    pawn.querySelector(".ca-pawn__img").style.backgroundImage = `url("${img}")`;
+    pawn.classList.toggle("is-frameless", val("partyFrame") === "none");
+    const scale = Math.min(200, Math.max(50, Number(val("partyScale")) || 100));
+    pawn.style.setProperty("--ca-pawn-scale", String(scale / 100));
+    pawn.style.setProperty("--ca-pawn-ring", val("partyColor") || "#d8b25e");
+    const label = pawn.querySelector(".ca-pawn__label");
+    label.textContent = val("partyLabel").trim();
+    label.hidden = !label.textContent;
+    const out = form.querySelector(".ca-scale-value");
+    if ( out ) out.textContent = `${scale}%`;
+    const customThumb = form.querySelector('.ca-token-choice[data-token="custom"] .ca-token-thumb');
+    if ( customThumb && val("partyImg") ) customThumb.style.backgroundImage = `url("${val("partyImg")}")`;
   }
 
   /** @this {BoardConfigApp} */
@@ -100,7 +168,8 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
         revealRadius: int(c.revealRadius, 0, 3, 1),
         diagonal: !!c.diagonal,
         movesPerDay: int(c.movesPerDay, 1, 50, 3),
-        autoRoll: !!c.autoRoll,
+        rollBy: ROLL_BY.includes(c.rollBy) ? c.rollBy : "auto",
+        lookfar: !!c.lookfar,
         lockOnDanger: !!c.lockOnDanger,
         veteran: !!c.veteran,
         treasureHunter: int(c.treasureHunter, 0, 2, 0),
@@ -109,7 +178,12 @@ export class BoardConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
         dangerTable: String(c.dangerTable ?? "").trim(),
         discoveryTable: String(c.discoveryTable ?? "").trim(),
         tilt: int(c.tilt, 0, 40, 18),
+        partyToken: PARTY_TOKENS.includes(c.partyToken) ? c.partyToken : "party",
         partyImg: String(c.partyImg ?? "").trim(),
+        partyFrame: PARTY_FRAMES.includes(c.partyFrame) ? c.partyFrame : "ring",
+        partyColor: /^#[0-9a-f]{6}$/i.test(String(c.partyColor ?? "")) ? c.partyColor : "#d8b25e",
+        partyScale: int(c.partyScale, 50, 200, 100),
+        partyLabel: String(c.partyLabel ?? "").trim().slice(0, 40),
         backImg: String(c.backImg ?? "").trim(),
         follow: !!c.follow
       });
@@ -179,7 +253,7 @@ export class TerrainLibraryApp extends HandlebarsApplicationMixin(ApplicationV2)
   /** @this {TerrainLibraryApp} */
   static async #onReset() {
     const ok = await DialogV2.confirm({
-      window: { title: loc("Terrains.reset") }, content: `<p>${loc("Terrains.resetConfirm")}</p>`, rejectClose: false
+      window: { title: loc("Terrains.reset") }, content: `<p>${loc("Terrains.resetConfirm")}</p>`, ...confirmButtons(), rejectClose: false
     });
     if ( !ok ) return;
     await saveTerrains(null);
@@ -310,7 +384,7 @@ export class OptionsEditorApp extends HandlebarsApplicationMixin(ApplicationV2) 
   /** @this {OptionsEditorApp} */
   static async #onReset() {
     const ok = await DialogV2.confirm({
-      window: { title: loc("Options.reset") }, content: `<p>${loc("Options.resetConfirm")}</p>`, rejectClose: false
+      window: { title: loc("Options.reset") }, content: `<p>${loc("Options.resetConfirm")}</p>`, ...confirmButtons(), rejectClose: false
     });
     if ( !ok ) return;
     await saveOptions(null);

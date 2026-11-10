@@ -20,16 +20,52 @@
         <div class="form-fields"><input type="number" name="config.tilt" value="{{config.tilt}}" min="0" max="40" step="1"> <span>°</span></div>
       </div>
       <div class="form-group">
-        <label>{{localize "CARDATLAS.Config.partyImg"}}</label>
-        <div class="form-fields"><file-picker name="config.partyImg" type="image" value="{{config.partyImg}}"></file-picker></div>
-      </div>
-      <div class="form-group">
         <label>{{localize "CARDATLAS.Config.backImg"}}</label>
         <div class="form-fields"><file-picker name="config.backImg" type="image" value="{{config.backImg}}"></file-picker></div>
       </div>
       <div class="form-group">
         <label>{{localize "CARDATLAS.Config.follow"}}</label>
         <div class="form-fields"><input type="checkbox" name="config.follow" {{checked config.follow}}></div>
+      </div>
+    </fieldset>
+
+    <fieldset class="ca-token-fieldset">
+      <legend>{{localize "CARDATLAS.Config.token"}}</legend>
+      <div class="ca-token-layout">
+        <div class="ca-token-gallery">
+          {{#each tokenChoices}}
+          <label class="ca-token-choice" data-token="{{id}}">
+            <input type="radio" name="config.partyToken" value="{{id}}" {{checked selected}}>
+            <span class="ca-token-thumb"{{#if img}} style="background-image: url('{{img}}')"{{/if}}>{{#unless img}}<i class="fa-solid fa-image"></i>{{/unless}}</span>
+            <span class="ca-token-name">{{label}}</span>
+          </label>
+          {{/each}}
+        </div>
+        <div class="ca-token-preview" aria-hidden="true">
+          <div class="ca-pawn"><div class="ca-pawn__shadow"></div><div class="ca-pawn__token"><div class="ca-pawn__img"></div></div><div class="ca-pawn__label" hidden></div></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyImg"}}</label>
+        <div class="form-fields"><file-picker name="config.partyImg" type="image" value="{{config.partyImg}}"></file-picker></div>
+      </div>
+      <div class="ca-actor-drop" data-actor-drop><i class="fa-solid fa-user-plus"></i> {{localize "CARDATLAS.Config.actorDrop"}}</div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyFrame"}}</label>
+        <div class="form-fields"><select name="config.partyFrame">{{selectOptions frameChoices selected=config.partyFrame}}</select></div>
+        <p class="hint">{{localize "CARDATLAS.Config.partyFrameHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyColor"}}</label>
+        <div class="form-fields"><input type="color" name="config.partyColor" value="{{config.partyColor}}"></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyScale"}}</label>
+        <div class="form-fields"><input type="range" name="config.partyScale" value="{{config.partyScale}}" min="50" max="200" step="10"> <span class="ca-scale-value">{{config.partyScale}}%</span></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyLabel"}}</label>
+        <div class="form-fields"><input type="text" name="config.partyLabel" value="{{config.partyLabel}}" maxlength="40" placeholder="{{localize 'CARDATLAS.Config.partyLabelHint'}}"></div>
       </div>
     </fieldset>
 
@@ -54,9 +90,14 @@
         <p class="hint">{{localize "CARDATLAS.Config.movesPerDayHint"}}</p>
       </div>
       <div class="form-group">
-        <label>{{localize "CARDATLAS.Config.autoRoll"}}</label>
-        <div class="form-fields"><input type="checkbox" name="config.autoRoll" {{checked config.autoRoll}}></div>
-        <p class="hint">{{localize "CARDATLAS.Config.autoRollHint"}}</p>
+        <label>{{localize "CARDATLAS.Config.rollBy"}}</label>
+        <div class="form-fields"><select name="config.rollBy">{{selectOptions rollByChoices selected=config.rollBy}}</select></div>
+        <p class="hint">{{localize "CARDATLAS.Config.rollByHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.lookfar"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.lookfar" {{checked config.lookfar}}></div>
+        <p class="hint">{{#if lookfarActive}}{{localize "CARDATLAS.Config.lookfarHint"}}{{else}}{{localize "CARDATLAS.Config.lookfarMissing"}}{{/if}}</p>
       </div>
       <div class="form-group">
         <label>{{localize "CARDATLAS.Config.lockOnDanger"}}</label>
@@ -69,11 +110,11 @@
       </div>
       <div class="form-group">
         <label>{{localize "CARDATLAS.Config.dangerTable"}}</label>
-        <div class="form-fields"><input type="text" name="config.dangerTable" value="{{config.dangerTable}}" placeholder="RollTable UUID" data-uuid-drop></div>
+        <div class="form-fields"><input type="text" name="config.dangerTable" value="{{config.dangerTable}}" placeholder="{{localize 'CARDATLAS.Config.tablePlaceholder'}}" data-uuid-drop></div>
       </div>
       <div class="form-group">
         <label>{{localize "CARDATLAS.Config.discoveryTable"}}</label>
-        <div class="form-fields"><input type="text" name="config.discoveryTable" value="{{config.discoveryTable}}" placeholder="RollTable UUID" data-uuid-drop></div>
+        <div class="form-fields"><input type="text" name="config.discoveryTable" value="{{config.discoveryTable}}" placeholder="{{localize 'CARDATLAS.Config.tablePlaceholder'}}" data-uuid-drop></div>
         <p class="hint">{{localize "CARDATLAS.Config.tablesHint"}}</p>
       </div>
     </fieldset>

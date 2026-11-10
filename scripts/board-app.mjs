@@ -2,16 +2,19 @@
  * The board window. One instance per client. The GM sees the editing tools, everybody sees
  * the table, the status line and the hand of travel options.
  */
-import { MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, esc, loc, threatLabel, txt } from "./constants.mjs";
+import {
+  ELEMENTS, ELEMENT_KEYS, MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, confirmButtons, elementLabel, esc, loc, threatLabel, txt
+} from "./constants.mjs";
 import { BoardView } from "./board-view.mjs";
-import { cellAt, cellThreat, coords, normalizeBoard } from "./rules.mjs";
+import { PARTY_TOKENS, cellAt, cellThreat, coords, normalizeBoard, travelDie } from "./rules.mjs";
+import { canRoll, rollTravelNow, usesLookfar } from "./travel.mjs";
 import { guardActions } from "./errors.mjs";
 import {
   deleteBoard, getActiveBoardId, getBoard, getTerrainMap, getTerrains, listBoards,
   saveBoard, saveTerrains, setActiveBoard
 } from "./store.mjs";
 import {
-  gmTravelRoll, patchCells, placeParty, request, resetTravel, setAllRevealed, setLocked, walk
+  patchCells, placeParty, request, resetTravel, setAllRevealed, setLocked, walk
 } from "./engine.mjs";
 import { playOption, visibleOptions } from "./options.mjs";
 
@@ -50,6 +53,7 @@ export class BoardApp extends ApplicationV2 {
       revealAll: BoardApp.#onRevealAll,
       hideAll: BoardApp.#onHideAll,
       travelRoll: BoardApp.#onTravelRoll,
+      rollTravel: BoardApp.#onTravelRoll,
       toggleLock: BoardApp.#onToggleLock,
       resetTravel: BoardApp.#onResetTravel,
       terrains: BoardApp.#onTerrains,
@@ -138,7 +142,8 @@ export class BoardApp extends ApplicationV2 {
     const table = this.element.querySelector(".ca-table");
     this.view = new BoardView(table, {
       t: key => txt(key),
-      assets: { pawn: `${PATH}/assets/pawn.svg` },
+      assets: { tokens: Object.fromEntries(PARTY_TOKENS.filter(k => k !== "custom").map(k => [k, `${PATH}/assets/tokens/${k}.svg`])) },
+      elements: ELEMENTS,
       onAction: (type, data) => this.#onViewAction(type, data)
     });
     // The board viewport sits under the status line and the hand.
@@ -186,7 +191,8 @@ export class BoardApp extends ApplicationV2 {
     const board = getBoard(id);
     const terrains = getTerrainMap();
     const isGM = game.user.isGM;
-    const canWalk = !!board && (isGM || (!board.travel.locked && game.settings.get(MODULE_ID, "movePermission") === "all"));
+    const waitingRoll = !!board?.travel.pending && board.config.rollBy !== "auto";
+    const canWalk = !!board && (isGM || (!board.travel.locked && !waitingRoll && game.settings.get(MODULE_ID, "movePermission") === "all"));
     this.view.setMode({
       isGM, peek: isGM && this.peek, tool: isGM ? this.tool : "walk", brush: this.brush,
       canWalk, selected: isGM && this.tool === "select" ? this.selected : -1
@@ -232,7 +238,17 @@ export class BoardApp extends ApplicationV2 {
       }))}</span>`);
     }
     if ( t.locked ) parts.push(`<span class="ca-chip ca-locked"><i class="fa-solid fa-hand"></i> ${esc(loc("Status.locked"))}</span>`);
-    if ( t.pending && game.user.isGM ) parts.push(`<span class="ca-chip ca-pending"><i class="fa-solid fa-hourglass-half"></i> ${esc(loc("Status.pending", { day: t.pending.day }))}</span>`);
+    if ( t.pending ) {
+      const { die } = travelDie(board.config, t.pending.threat);
+      if ( t.awaitLookfar ) {
+        const who = game.users.get(t.awaitLookfar.userId)?.name ?? "?";
+        parts.push(`<span class="ca-chip ca-pending"><i class="fa-solid fa-hourglass-half"></i> ${esc(loc("Status.lookfarWait", { name: who }))}</span>`);
+      }
+      if ( canRoll(board) ) {
+        parts.push(`<button type="button" class="ca-chip ca-roll" data-action="rollTravel"><i class="fa-solid fa-dice-d20"></i> ${esc(loc("Status.rollNow", { day: t.pending.day, die: `d${die}` }))}${usesLookfar(board) ? ` <span class="ca-roll-tag">Lookfar</span>` : ""}</button>`);
+      }
+      else parts.push(`<span class="ca-chip ca-pending"><i class="fa-solid fa-hourglass-half"></i> ${esc(loc("Status.gmWillRoll", { day: t.pending.day }))}</span>`);
+    }
     el.innerHTML = parts.join("");
   }
 
@@ -326,8 +342,17 @@ export class BoardApp extends ApplicationV2 {
         <span class="ca-swatch" style="background-image:url('${esc(t.img)}');--ca-terrain:${esc(t.color || "#777")}"></span>
         <span>${esc(txt(t.name))}</span>
       </button>`).join("");
-    el.innerHTML = `${chips}<button type="button" class="ca-chip-terrain is-eraser${this.brush === "__empty" ? " is-on" : ""}" data-action="brush" data-brush="__empty">
-      <span class="ca-swatch"><i class="fa-solid fa-eraser"></i></span><span>${esc(loc("Tool.noCard"))}</span></button>`;
+    // Latent mana brushes paint an element over the cards without changing their terrain.
+    const mana = ELEMENT_KEYS.map(k => `
+      <button type="button" class="ca-chip-terrain ca-chip-mana${this.brush === `mana:${k}` ? " is-on" : ""}" data-action="brush" data-brush="mana:${k}" style="--ca-mana:${ELEMENTS[k].color}" data-tooltip="${esc(loc("Mana.brush", { element: elementLabel(k) }))}">
+        <span class="ca-swatch ca-swatch-mana"><i class="${ELEMENTS[k].icon}"></i></span>
+        <span>${esc(elementLabel(k))}</span>
+      </button>`).join("");
+    el.innerHTML = `<div class="ca-palette-row">${chips}<button type="button" class="ca-chip-terrain is-eraser${this.brush === "__empty" ? " is-on" : ""}" data-action="brush" data-brush="__empty">
+      <span class="ca-swatch"><i class="fa-solid fa-eraser"></i></span><span>${esc(loc("Tool.noCard"))}</span></button></div>
+      <div class="ca-palette-row ca-palette-mana"><span class="ca-palette-label"><i class="fa-solid fa-wand-sparkles"></i> ${esc(loc("Mana.title"))}</span>${mana}
+      <button type="button" class="ca-chip-terrain is-eraser${this.brush === "mana:none" ? " is-on" : ""}" data-action="brush" data-brush="mana:none">
+        <span class="ca-swatch"><i class="fa-solid fa-ban"></i></span><span>${esc(loc("Mana.remove"))}</span></button></div>`;
   }
 
   /** GM side panel: edit the selected card. */
@@ -362,6 +387,9 @@ export class BoardApp extends ApplicationV2 {
         <select name="threat">${opt("", "")}${THREAT_KEYS.map(k => opt(k, `${threatLabel(k)} (d${THREAT_DIE[k]})`)).join("")}</select></div>
       <div class="ca-field"><label>${esc(loc("Cell.passable"))}</label>
         <select name="passable">${opt("", "")}${opt("true", loc("Common.yes"))}${opt("false", loc("Common.no"))}</select></div>
+      <div class="ca-field"><label>${esc(loc("Mana.title"))}</label>
+        <select name="mana">${opt("", loc("Mana.none"))}${ELEMENT_KEYS.map(k => opt(k, elementLabel(k))).join("")}</select></div>
+      <div class="ca-field ca-check"><label><input type="checkbox" name="manaHidden"> ${esc(loc("Mana.hidden"))}</label></div>
       <div class="ca-field"><label>${esc(loc("Cell.text"))}</label><textarea name="text" rows="4" placeholder="${esc(loc("Cell.textHint"))}"></textarea></div>
       <div class="ca-field"><label>${esc(loc("Cell.link"))}</label><input type="text" name="link" placeholder="${esc(loc("Cell.linkHint"))}"></div>
       <div class="ca-field"><label>${esc(loc("Cell.note"))}</label><textarea name="note" rows="3"></textarea></div>
@@ -392,6 +420,10 @@ export class BoardApp extends ApplicationV2 {
     set("img", cell.img ?? "");
     set("threat", cell.threat ?? "");
     set("passable", typeof cell.passable === "boolean" ? String(cell.passable) : "");
+    set("mana", cell.mana ?? "");
+    set("manaHidden", !!cell.manaHidden);
+    const hiddenBox = el.querySelector('input[name="manaHidden"]');
+    if ( hiddenBox ) hiddenBox.closest(".ca-field").hidden = !cell.mana;
     set("text", txt(cell.text ?? ""));
     set("link", cell.link ?? "");
     set("note", cell.note ?? "");
@@ -451,9 +483,18 @@ export class BoardApp extends ApplicationV2 {
         this.sync({ animate: false });
         break;
       case "place": await placeParty(id, data.x, data.y); break;
-      case "paint":
+      case "paint": {
+        if ( String(data.terrain).startsWith("mana:") ) {
+          // Mana goes on existing cards only; "mana:none" removes it.
+          const element = data.terrain.slice(5);
+          const cells = getBoard(id)?.cells ?? [];
+          const patches = data.indices.filter(i => cells[i]).map(i => ({ i, data: { mana: element === "none" ? "" : element } }));
+          if ( patches.length ) await patchCells(id, patches);
+          break;
+        }
         await patchCells(id, data.indices.map(i => ({ i, data: data.terrain === "__empty" ? null : { terrain: data.terrain, img: "" } })));
         break;
+      }
       case "reveal":
         await patchCells(id, data.indices.map(i => ({ i, data: { revealed: !!data.revealed } })));
         break;
@@ -580,7 +621,7 @@ export class BoardApp extends ApplicationV2 {
     const ok = await DialogV2.confirm({
       window: { title: loc("Toolbar.delete"), icon: "fa-solid fa-trash" },
       content: `<p>${esc(loc("Confirm.delete", { name: board.name }))}</p>`,
-      rejectClose: false
+      ...confirmButtons(), rejectClose: false
     });
     if ( !ok ) return;
     await deleteBoard(board.id);
@@ -605,13 +646,13 @@ export class BoardApp extends ApplicationV2 {
   static async #onHideAll() {
     if ( !this.currentId ) return;
     const ok = await DialogV2.confirm({
-      window: { title: loc("Toolbar.hideAll") }, content: `<p>${esc(loc("Confirm.hideAll"))}</p>`, rejectClose: false
+      window: { title: loc("Toolbar.hideAll") }, content: `<p>${esc(loc("Confirm.hideAll"))}</p>`, ...confirmButtons(), rejectClose: false
     });
     if ( ok ) await setAllRevealed(this.currentId, false);
   }
 
   /** @this {BoardApp} */
-  static async #onTravelRoll() { if ( this.currentId ) await gmTravelRoll(this.currentId); }
+  static async #onTravelRoll() { if ( this.currentId ) await rollTravelNow(this.currentId); }
 
   /** @this {BoardApp} */
   static async #onToggleLock() {
@@ -623,7 +664,7 @@ export class BoardApp extends ApplicationV2 {
   static async #onResetTravel() {
     if ( !this.currentId ) return;
     const ok = await DialogV2.confirm({
-      window: { title: loc("Toolbar.resetTravel") }, content: `<p>${esc(loc("Confirm.resetTravel"))}</p>`, rejectClose: false
+      window: { title: loc("Toolbar.resetTravel") }, content: `<p>${esc(loc("Confirm.resetTravel"))}</p>`, ...confirmButtons(), rejectClose: false
     });
     if ( ok ) await resetTravel(this.currentId);
   }

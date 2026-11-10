@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.1.0
+
+- **Jogadores rolam o Teste de Viagem.** Nova opção *Quem rola o Teste de Viagem*:
+  - **Automático:** como antes.
+  - **O mestre.**
+  - **Os jogadores:** a rolagem sai no chat com o nome do jogador, e o mestre confere e aplica.
+  - **Botão Rolar:** com o mestre ou os jogadores rolando, o botão aparece na linha de status, e o grupo só segue viagem depois do teste do dia.
+- **Integração opcional com o Lookfar:**
+  - O botão **Rolar** abre o Teste de Viagem do Lookfar já com a ameaça do dia e os poderes de Andarilho.
+  - A rolagem do Lookfar fecha o dia no mapa.
+  - Funciona só com o Lookfar ativo; sem ele, o mapa usa o próprio teste.
+- **Token do grupo novo e personalizável:**
+  - **Token padrão:** o novo token Grupo.
+  - **Tokens prontos:** Estandarte (o antigo), Caravana, Navio, Aeronave e Bússola.
+  - **Imagem própria:** inclusive arrastando um ator.
+  - **Aparência:** moldura em anel ou sem moldura, cor do anel, tamanho e nome sob o token.
+- **Mana latente:**
+  - O mestre marca cartas energizadas por ar, raio, trevas, terra, fogo, gelo, luz ou veneno, com um pincel na paleta ou pelo painel da carta.
+  - Cada elemento tem um efeito animado.
+  - Há a opção *Só o mestre vê a mana*.
+  - A primeira chegada do grupo avisa no chat.
+  - O gerador não cria mana.
+- **Gerador de mapas: início do grupo.** O grupo pode começar numa aldeia sorteada, na cidade ou na carta clicada na prévia, que pode virar uma aldeia. No mapa em branco, o clique também escolhe o início.
+- **Tudo em português:** o módulo carrega o próprio pt-BR mesmo com o Foundry em inglês. A configuração *Idioma do Atlas de Cartas* volta ao idioma do Foundry. Os botões Sim/Não dos diálogos do módulo também saem em português.
+- Mapas da 1.0 continuam funcionando: *Rolar sozinho* desligado vira *O mestre*, e uma imagem do grupo já escolhida vira *Imagem própria*.
+
 ## 1.0.2
 
 - **Corrigido:** criar um mapa novo falhava com o erro "Cannot set property state". A janela *Novo mapa* usava o nome `state`, que o Foundry reserva para o estado da janela.

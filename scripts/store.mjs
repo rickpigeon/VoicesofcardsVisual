@@ -39,6 +39,13 @@ export function registerSettings() {
     scope: "client", config: true, type: Number, default: 0.6,
     range: { min: 0, max: 1, step: 0.05 }
   });
+  // Literal labels: this setting chooses the language, so it cannot depend on it.
+  game.settings.register(MODULE_ID, "language", {
+    name: "Idioma do Atlas de Cartas / Card Atlas language",
+    hint: "Português: o módulo aparece em português mesmo com o Foundry em outro idioma. Idioma do Foundry: segue o idioma do Foundry. Recarregue a página depois de mudar.",
+    scope: "client", config: true, type: String, default: "pt-BR", requiresReload: true,
+    choices: { "pt-BR": "Português (Brasil)", foundry: "Idioma do Foundry / Foundry's language" }
+  });
   game.settings.register(MODULE_ID, "autoOpen", {
     name: "CARDATLAS.Settings.autoOpen.name",
     hint: "CARDATLAS.Settings.autoOpen.hint",

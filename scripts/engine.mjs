@@ -3,8 +3,8 @@
  * active GM (request()), the GM validates, writes the world setting, and every client
  * animates the difference when the setting update arrives.
  */
-import { GM_ACTIONS, MODULE_ID, QUERY_NAME, THREAT_DIE, clamp, loc, maxThreat, stepDownDie } from "./constants.mjs";
-import { cellAt, cellThreat, isAdjacent, isPassable, revealAround } from "./rules.mjs";
+import { GM_ACTIONS, MODULE_ID, QUERY_NAME, clamp, loc, maxThreat } from "./constants.mjs";
+import { cellAt, cellThreat, isAdjacent, isPassable, revealAround, travelDie, travelOutcome } from "./rules.mjs";
 import { getActiveBoardId, getBoard, getOptions, getTerrainMap, mutateBoard } from "./store.mjs";
 import { drawOutcomeTable, postDangerReminder, postDayEnd, postEnterMessage, postTravelRoll } from "./chat.mjs";
 
@@ -52,6 +52,8 @@ export async function handleQuery(data = {}) {
         return strip(await walk(data.boardId, Number(data.x), Number(data.y), { gm: isGM }));
       }
       case "option": return strip(await runOption(data.boardId, String(data.optionId), user));
+      case "travelResult": return strip(await applyTravelResult(data.boardId, data, user));
+      case "lookfarStart": return strip(await markLookfar(data.boardId, user));
       default: return fail("unknownAction");
     }
   } catch(err) {
@@ -75,6 +77,8 @@ export async function walk(boardId, x, y, { gm = false } = {}) {
   const result = await mutateBoard(boardId, async board => {
     if ( !board.party ) return fail("noParty");
     if ( board.travel.locked && !gm ) return fail("locked");
+    // A day that ended without its Travel Roll has to be rolled before the group goes on.
+    if ( board.travel.pending && !gm && board.config.rollBy !== "auto" ) return fail("rollPending");
     const target = cellAt(board, x, y);
     if ( !target ) return fail("noCard");
     if ( !isAdjacent(board, board.party, { x, y }) ) return fail("notAdjacent");
@@ -92,7 +96,8 @@ export async function walk(boardId, x, y, { gm = false } = {}) {
     const firstVisit = !target.visited;
     target.visited = true;
     revealAround(board, x, y, board.config.revealRadius);
-    if ( firstVisit && (target.text || target.link) ) effects.push({ type: "enter", cell: { ...target } });
+    const feelsMana = !!target.mana && !target.manaHidden;
+    if ( firstVisit && (target.text || target.link || feelsMana) ) effects.push({ type: "enter", cell: { ...target } });
     await countStep(board, terrains, effects, cellThreat(target, terrains));
     return { ok: true };
   });
@@ -121,17 +126,19 @@ async function countStep(board, terrains, effects, threat) {
 }
 
 /** Close the current travel day: roll (or flag the roll for the GM) and start the next one. */
-async function endDay(board, terrains, effects, { manual = false } = {}) {
+async function endDay(board, terrains, effects, { manual = false, defer = false } = {}) {
   const t = board.travel;
   const here = board.party ? cellAt(board, board.party.x, board.party.y) : null;
   const threat = t.dayThreat || cellThreat(here, terrains);
-  if ( board.config.autoRoll || manual ) {
+  if ( !defer && (board.config.rollBy === "auto" || manual) ) {
     effects.push({ type: "travel", r: await rollTravel(board, threat, t.day) });
     t.pending = null;
   }
   else {
+    // The GM or a player rolls it (from the status line or through Lookfar).
     t.pending = { threat, day: t.day };
-    effects.push({ type: "dayEnd", day: t.day, threat });
+    t.awaitLookfar = null;
+    effects.push({ type: "dayEnd", day: t.day, threat, die: travelDie(board.config, threat).die });
   }
   t.day += 1;
   t.steps = 0;
@@ -143,20 +150,79 @@ async function endDay(board, terrains, effects, { manual = false } = {}) {
 /* -------------------------------------------- */
 
 async function rollTravel(board, threat, day, { reroll = false, die = null } = {}) {
-  const baseDie = THREAT_DIE[threat] ?? 8;
-  const useDie = die ?? (board.config.veteran ? stepDownDie(baseDie, 1) : baseDie);
+  const dice = travelDie(board.config, threat);
+  const useDie = die ?? dice.die;
   const roll = await new foundry.dice.Roll(`1d${useDie}`).evaluate();
-  const total = roll.total;
-  const discoveryMax = 1 + clamp(Number(board.config.treasureHunter) || 0, 0, 2);
-  const outcome = total >= 6 ? "danger" : (total <= discoveryMax ? "discovery" : "calm");
-  const last = { day, threat, baseDie, die: useDie, total, outcome, discoveryMax, reroll };
+  return { ...resolveTravel(board, { day, threat, baseDie: dice.baseDie, die: useDie, total: roll.total, reroll }), roll };
+}
+
+/** Record a Travel Roll result on the board (last result, danger lock). */
+function resolveTravel(board, { day, threat, baseDie, die, total, reroll = false, variant = false, by = null, source = "atlas" }) {
+  const { outcome, discoveryMax } = travelOutcome(board.config, total, { variant });
+  const last = { day, threat, baseDie, die, total, outcome, discoveryMax, reroll, by, source };
   const prev = board.travel.last;
   board.travel.last = last;
   if ( board.config.lockOnDanger ) {
     if ( outcome === "danger" ) board.travel.locked = true;
     else if ( reroll && prev?.outcome === "danger" ) board.travel.locked = false;
   }
-  return { ...last, roll };
+  return last;
+}
+
+/**
+ * A Travel Roll made on another client: by a player (the roll message is already in the chat)
+ * or through Lookfar. The GM checks it belongs to the pending day and uses the right die.
+ */
+export async function applyTravelResult(boardId, data, user) {
+  const terrains = getTerrainMap();
+  const effects = [];
+  const source = data.source === "lookfar" ? "lookfar" : "atlas";
+  const result = await mutateBoard(boardId, board => {
+    const t = board.travel;
+    if ( !t.pending ) return fail("noPending");
+    if ( Number(data.day) !== t.pending.day ) return fail("noPending");
+    if ( !user.isGM && source === "atlas" && board.config.rollBy !== "players" ) return fail("gmRolls");
+    const dice = travelDie(board.config, t.pending.threat);
+    const die = Math.round(Number(data.die));
+    // Lookfar lets the roller change the threat in its dialog; our own rolls must match.
+    if ( source === "atlas" && die !== dice.die ) return fail("badDie");
+    const total = Math.round(Number(data.total));
+    if ( !Number.isFinite(total) || total < 1 || total > die ) return fail("badDie");
+    const last = resolveTravel(board, {
+      day: t.pending.day, threat: t.pending.threat, baseDie: dice.baseDie, die, total,
+      variant: !!data.variant, by: user.id, source
+    });
+    t.pending = null;
+    t.awaitLookfar = null;
+    effects.push({ type: "travel", r: last, posted: true, source });
+    return { ok: true };
+  });
+  await runEffects(boardId, effects, terrains);
+  return result;
+}
+
+/** Someone opened Lookfar's Travel Check for the pending day: accept that user's next roll. */
+export async function markLookfar(boardId, user) {
+  return mutateBoard(boardId, board => {
+    const t = board.travel;
+    if ( !t.pending ) return fail("noPending");
+    if ( !user.isGM && board.config.rollBy !== "players" ) return fail("gmRolls");
+    t.awaitLookfar = { userId: user.id, day: t.pending.day };
+    return { ok: true };
+  });
+}
+
+/** GM: close the current day now without rolling, so it can be rolled by hand or through Lookfar. */
+export async function endDayNow(boardId) {
+  const terrains = getTerrainMap();
+  const effects = [];
+  const result = await mutateBoard(boardId, async board => {
+    if ( board.travel.pending ) return { ok: true, write: false };
+    await endDay(board, terrains, effects, { defer: true });
+    return { ok: true };
+  });
+  await runEffects(boardId, effects, terrains);
+  return result;
 }
 
 /** GM button: roll the pending day, or end the current day now and roll it. */
@@ -289,10 +355,13 @@ async function runEffects(boardId, effects, terrains) {
       if ( e.type === "enter" ) await postEnterMessage(board, e.cell, terrains.get(e.cell.terrain));
       else if ( e.type === "dayEnd" ) await postDayEnd(board, e);
       else if ( e.type === "travel" ) {
-        await wait(650); // let the cards finish turning first
-        await postTravelRoll(board, e.r);
+        if ( !e.posted ) {
+          await wait(650); // let the cards finish turning first
+          await postTravelRoll(board, e.r);
+        }
         if ( e.r.outcome === "danger" ) await postDangerReminder(board);
-        await drawOutcomeTable(board, e.r.outcome);
+        // Lookfar already generated the danger or discovery.
+        if ( e.source !== "lookfar" ) await drawOutcomeTable(board, e.r.outcome);
       }
     } catch(err) {
       console.error(`${MODULE_ID} |`, err);

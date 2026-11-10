@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <radialGradient id="paper" cx="0.45" cy="0.4" r="0.7"><stop offset="0" stop-color="#f6ead0"/><stop offset="1" stop-color="#cdb486"/></radialGradient>
+  </defs>
+  <circle cx="60" cy="60" r="60" fill="url(#paper)"/>
+  <circle cx="60" cy="60" r="46" fill="none" stroke="#6b4a2a" stroke-width="2.4"/>
+  <circle cx="60" cy="60" r="40" fill="none" stroke="#6b4a2a" stroke-width="1" stroke-dasharray="2 4"/>
+  <g fill="#8b7350">
+    <path d="M60 60 L72 48 L60 14 Z" transform="rotate(45 60 60)"/><path d="M60 60 L72 48 L60 14 Z" transform="rotate(135 60 60)"/>
+    <path d="M60 60 L72 48 L60 14 Z" transform="rotate(225 60 60)"/><path d="M60 60 L72 48 L60 14 Z" transform="rotate(315 60 60)"/>
+  </g>
+  <path d="M60 10 L69 60 L60 66 L51 60 Z" fill="#b5452f" stroke="#5a1c12" stroke-width="1.4"/>
+  <path d="M60 110 L69 60 L60 54 L51 60 Z" fill="#2d3b52" stroke="#141a2b" stroke-width="1.4"/>
+  <path d="M10 60 L60 51 L66 60 L60 69 Z" fill="#3e4d66" stroke="#141a2b" stroke-width="1.2"/>
+  <path d="M110 60 L60 51 L54 60 L60 69 Z" fill="#3e4d66" stroke="#141a2b" stroke-width="1.2"/>
+  <circle cx="60" cy="60" r="6" fill="#d9b25b" stroke="#6b4a2a" stroke-width="2"/>
+  <path d="M55.5 30 L55.5 20 L64.5 30 L64.5 20" fill="none" stroke="#fff6dc" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

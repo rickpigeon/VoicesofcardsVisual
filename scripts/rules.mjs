@@ -5,13 +5,19 @@
  */
 
 const THREATS = ["minimal", "low", "medium", "high", "veryHigh"];
+const THREAT_DICE = { minimal: 6, low: 8, medium: 10, high: 12, veryHigh: 20 };
+const DICE = [6, 8, 10, 12, 20];
+export const ROLL_BY = ["auto", "gm", "players"];
+export const PARTY_TOKENS = ["party", "banner", "caravan", "ship", "airship", "compass", "custom"];
+export const PARTY_FRAMES = ["ring", "none"];
 
 export function defaultConfig() {
   return {
     revealRadius: 1,       // cards turned around the group after each step
     diagonal: false,       // allow diagonal steps (and square reveal)
     movesPerDay: 3,        // cards walked per travel day (LB p. 106: the GM sets the day's length)
-    autoRoll: true,        // roll the Travel Roll automatically when a day ends
+    rollBy: "auto",        // who rolls the Travel Roll: auto (at once) | gm | players
+    lookfar: false,        // roll through the Lookfar module's Travel Check dialog when it is active
     lockOnDanger: true,    // "unless stopped by a danger..." (LB p. 106)
     veteran: false,        // Viajante Experiente: travel die one step smaller, min d6 (LB p. 177)
     treasureHunter: 0,     // Caçador de Tesouros NP (0-2): discovery on NP+1 or less (LB p. 176)
@@ -20,10 +26,50 @@ export function defaultConfig() {
     dangerTable: "",       // RollTable UUID drawn on a danger
     discoveryTable: "",    // RollTable UUID drawn on a discovery
     tilt: 18,              // table tilt in degrees (0 = flat)
-    partyImg: "",          // image for the group's token
+    partyToken: "party",   // built-in token art (PARTY_TOKENS) or "custom"
+    partyImg: "",          // custom token image (used with partyToken "custom")
+    partyFrame: "ring",    // ring (round, golden ring) | none (the image as it is, for cut-out tokens)
+    partyColor: "#d8b25e", // ring colour
+    partyScale: 100,       // token size in %
+    partyLabel: "",        // name shown under the token
     backImg: "",           // custom card back
     follow: true           // camera follows the group
   };
+}
+
+/** Fill and fix a stored config, including boards saved before 1.1 (autoRoll, partyImg only). */
+export function normalizeConfig(raw = {}) {
+  const c = { ...defaultConfig(), ...raw };
+  if ( !ROLL_BY.includes(raw.rollBy) ) c.rollBy = raw.autoRoll === false ? "gm" : "auto";
+  delete c.autoRoll;
+  if ( !PARTY_TOKENS.includes(raw.partyToken) ) c.partyToken = raw.partyImg ? "custom" : "party";
+  if ( !PARTY_FRAMES.includes(c.partyFrame) ) c.partyFrame = "ring";
+  const scale = Math.round(Number(c.partyScale));
+  c.partyScale = Number.isFinite(scale) ? Math.min(200, Math.max(50, scale)) : 100;
+  c.lookfar = !!c.lookfar;
+  return c;
+}
+
+/* -------------------------------------------- */
+/*  Travel Roll (Livro Básico p. 106-109)        */
+/* -------------------------------------------- */
+
+/** Die for a day of the given threat: the threat's die, one step smaller for Viajante Experiente. */
+export function travelDie(config, threat) {
+  const baseDie = THREAT_DICE[threat] ?? 8;
+  const die = config?.veteran ? DICE[Math.max(0, DICE.indexOf(baseDie) - 1)] : baseDie;
+  return { baseDie, die };
+}
+
+/**
+ * Outcome of a Travel Roll: 6+ danger; discovery on 1, or up to NP + 1 with Caçador de Tesouros.
+ * `variant` follows Lookfar's variant rules (2-3 is a minor discovery, 1 a major one).
+ */
+export function travelOutcome(config, total, { variant = false } = {}) {
+  const hunter = Math.max(0, Math.min(2, Number(config?.treasureHunter) || 0));
+  const discoveryMax = variant ? 3 : 1 + hunter;
+  const outcome = total >= 6 ? "danger" : (total <= discoveryMax ? "discovery" : "calm");
+  return { outcome, discoveryMax };
 }
 
 export function defaultTravel() {
@@ -119,10 +165,11 @@ export function compactCell(c) {
   const out = { terrain: c.terrain || "plains" };
   if ( c.revealed ) out.revealed = true;
   if ( c.visited ) out.visited = true;
-  for ( const k of ["label", "img", "threat", "note", "text", "link"] ) {
+  for ( const k of ["label", "img", "threat", "note", "text", "link", "mana"] ) {
     if ( typeof c[k] === "string" && c[k].trim() ) out[k] = c[k].trim();
   }
   if ( typeof c.passable === "boolean" ) out.passable = c.passable;
+  if ( out.mana && c.manaHidden ) out.manaHidden = true;
   return out;
 }
 
@@ -134,7 +181,7 @@ export function compactBoard(board) {
     rows: board.rows,
     cells: board.cells.map(compactCell),
     party: board.party ? { x: board.party.x, y: board.party.y } : null,
-    config: { ...defaultConfig(), ...board.config },
+    config: normalizeConfig(board.config),
     travel: { ...defaultTravel(), ...board.travel }
   };
 }
@@ -156,7 +203,7 @@ export function normalizeBoard(raw) {
     rows,
     cells,
     party: null,
-    config: { ...defaultConfig(), ...(raw.config ?? {}) },
+    config: normalizeConfig(raw.config ?? {}),
     travel: { ...defaultTravel(), ...(raw.travel ?? {}) }
   };
   const p = raw.party;

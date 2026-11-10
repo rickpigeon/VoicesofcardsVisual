@@ -1,13 +1,36 @@
 {
   "CARDATLAS": {
     "Title": "Card Atlas",
-    "Keybinding": { "open": "Open the Card Atlas" },
-    "Threat": { "minimal": "Minimal", "low": "Low", "medium": "Medium", "high": "High", "veryHigh": "Very high" },
+    "Keybinding": {
+      "open": "Open the Card Atlas"
+    },
+    "Threat": {
+      "minimal": "Minimal",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "veryHigh": "Very high"
+    },
     "Terrain": {
-      "village": "Village", "city": "City", "camp": "Haven", "road": "Road", "plains": "Plains",
-      "woods": "Woods", "hills": "Hills", "river": "River", "forest": "Forest", "mountain": "Mountain",
-      "sea": "Open sea", "swamp": "Swamp", "desert": "Desert", "tundra": "Frozen waste", "jungle": "Jungle",
-      "volcano": "Volcano", "ruins": "Ruins", "dungeon": "Dungeon", "treasure": "Treasure"
+      "village": "Village",
+      "city": "City",
+      "camp": "Haven",
+      "road": "Road",
+      "plains": "Plains",
+      "woods": "Woods",
+      "hills": "Hills",
+      "river": "River",
+      "forest": "Forest",
+      "mountain": "Mountain",
+      "sea": "Open sea",
+      "swamp": "Swamp",
+      "desert": "Desert",
+      "tundra": "Frozen waste",
+      "jungle": "Jungle",
+      "volcano": "Volcano",
+      "ruins": "Ruins",
+      "dungeon": "Dungeon",
+      "treasure": "Treasure"
     },
     "TerrainDesc": {
       "village": "Settlement. You can rest at an inn and restock IP.",
@@ -31,29 +54,49 @@
       "treasure": "Point of interest: something valuable."
     },
     "Cost": {
-      "ip4": "4 IP", "ip3": "3 IP", "ip2": "2 IP", "z5": "5 z", "z10": "10 z", "z20": "20 z", "z40": "40 z",
-      "z10ip": "10 z per IP", "fp1": "1 FP"
+      "ip4": "4 IP",
+      "ip3": "3 IP",
+      "ip2": "2 IP",
+      "z5": "5 z",
+      "z10": "10 z",
+      "z20": "20 z",
+      "z40": "40 z",
+      "z10ip": "10 z per IP",
+      "fp1": "1 FP"
     },
-    "Source": { "house": "House rule" },
+    "Source": {
+      "house": "House rule"
+    },
     "Opt": {
       "rest": {
         "name": "Rest",
         "desc": "The group rests for 4 to 6 hours. Each PC recovers all HP and MP and recovers from all status effects.\nIn the wilds you need a magic tent, someone's hospitality or a safe place; in settlements, an inn room or hospitality.\nAt the end of the rest scene, each PC may create a Bond, add an emotion to a Bond or swap an emotion. Immediate threats may advance while you rest.",
-        "tent": "Magic tent", "tentText": "Created with 4 IP from a single character. Fits the whole group.",
-        "hosp": "Hospitality", "hospText": "Someone friendly takes the group in, usually for help or money.",
-        "safe": "Safe place", "safeText": "Somewhere with no risk of attack: a consecrated temple, a secret room, a magic circle...",
-        "inn1": "Inn (village)", "inn1Text": "Per person, per night.",
-        "inn2": "Inn (town)", "inn2Text": "Per person, per night.",
-        "inn3": "Inn (city)", "inn3Text": "Per person, per night."
+        "tent": "Magic tent",
+        "tentText": "Created with 4 IP from a single character. Fits the whole group.",
+        "hosp": "Hospitality",
+        "hospText": "Someone friendly takes the group in, usually for help or money.",
+        "safe": "Safe place",
+        "safeText": "Somewhere with no risk of attack: a consecrated temple, a secret room, a magic circle...",
+        "inn1": "Inn (village)",
+        "inn1Text": "Per person, per night.",
+        "inn2": "Inn (town)",
+        "inn2Text": "Per person, per night.",
+        "inn3": "Inn (city)",
+        "inn3Text": "Per person, per night."
       },
       "item": {
         "name": "Use an inventory item",
         "desc": "Spend IP from a single character to create the item in the backpack and use it right away. Nothing is kept for later.",
-        "elixir": "Elixir", "elixirText": "One creature recovers 50 MP.",
-        "remedy": "Remedy", "remedyText": "One creature recovers 50 HP.",
-        "tonic": "Tonic", "tonicText": "One creature recovers from all status effects.",
-        "shard": "Elemental shard", "shardText": "10 air, bolt, fire, earth or ice damage to one creature you can see.",
-        "tent": "Magic tent", "tentText": "Lets the group rest in the wilds."
+        "elixir": "Elixir",
+        "elixirText": "One creature recovers 50 MP.",
+        "remedy": "Remedy",
+        "remedyText": "One creature recovers 50 HP.",
+        "tonic": "Tonic",
+        "tonicText": "One creature recovers from all status effects.",
+        "shard": "Elemental shard",
+        "shardText": "10 air, bolt, fire, earth or ice damage to one creature you can see.",
+        "tent": "Magic tent",
+        "tentText": "Lets the group rest in the wilds."
       },
       "restock": {
         "name": "Restock IP",
@@ -63,9 +106,12 @@
       "services": {
         "name": "Travel services",
         "desc": "Passage for one day of travel, per person. Price and availability depend on the world, and a vehicle may increase the distance of a travel day.",
-        "land": "Land", "landText": "Per person, per day.",
-        "water": "Water", "waterText": "Per person, per day.",
-        "air": "Air", "airText": "Per person, per day."
+        "land": "Land",
+        "landText": "Per person, per day.",
+        "water": "Water",
+        "waterText": "Per person, per day.",
+        "air": "Air",
+        "airText": "Per person, per day."
       },
       "newPlace": {
         "name": "New place on the map",
@@ -83,21 +129,36 @@
       "camp": {
         "name": "Camp activity",
         "desc": "Optional rule. In each rest scene, each PC performs one of the two activities they have and applies the benefit to the target. \"Once\" benefits last until the next rest.",
-        "combat": "Combat lessons", "combatText": "An ally: once, adds +4 to an Accuracy check or an offensive Magic check.",
-        "magic": "Magic lessons", "magicText": "An ally: once, casts a spell you know, paying its cost and making the checks.",
-        "carto": "Cartography", "cartoText": "You: once, reroll a group travel roll and keep the new result.",
-        "harvest": "Harvest", "harvestText": "A gourmet: roll 1d6. 1: an easy conflict at the end of the rest; 2: 2 random ingredients; 3-5: 3 random; 6: 3 of your choice.",
-        "owl": "Night owl", "owlText": "You: generate 3 progress points for a project.",
-        "daydream": "Daydream", "daydreamText": "You: once, when you lose HP, lose only half.",
-        "exercise": "Exercise", "exerciseText": "You: once, avoid all status effects you would suffer from a single source.",
-        "scout": "Foraging", "scoutText": "You or an ally: roll 1d6. 1: you recover only half your HP and MP; 2: the target recovers 2 IP; 3-5: 3 IP; 6: 3 IP and you find 50 × your level in zenit.",
-        "forge": "Camp forge", "forgeText": "You: repair a group item, create a basic weapon, armor or shield for free, or break equipment down into a material.",
-        "massage": "Massage", "massageText": "An ally: once, pays half the MP cost (not for rituals).",
-        "pep": "Pep talk", "pepText": "An ally: once, doubles the MP they recover.",
-        "plan": "Planning", "planText": "An ally: once, +4 when leading a group check or examining something or someone.",
-        "double": "Double portion", "doubleText": "An ally: once, doubles the HP they recover.",
-        "sleep": "Deep sleep", "sleepText": "You: once, one extra action on your turn (Equipment, Hinder or Inventory).",
-        "martial": "Martial training", "martialText": "You: once, when attacking, gain multi (2) or +1 multi."
+        "combat": "Combat lessons",
+        "combatText": "An ally: once, adds +4 to an Accuracy check or an offensive Magic check.",
+        "magic": "Magic lessons",
+        "magicText": "An ally: once, casts a spell you know, paying its cost and making the checks.",
+        "carto": "Cartography",
+        "cartoText": "You: once, reroll a group travel roll and keep the new result.",
+        "harvest": "Harvest",
+        "harvestText": "A gourmet: roll 1d6. 1: an easy conflict at the end of the rest; 2: 2 random ingredients; 3-5: 3 random; 6: 3 of your choice.",
+        "owl": "Night owl",
+        "owlText": "You: generate 3 progress points for a project.",
+        "daydream": "Daydream",
+        "daydreamText": "You: once, when you lose HP, lose only half.",
+        "exercise": "Exercise",
+        "exerciseText": "You: once, avoid all status effects you would suffer from a single source.",
+        "scout": "Foraging",
+        "scoutText": "You or an ally: roll 1d6. 1: you recover only half your HP and MP; 2: the target recovers 2 IP; 3-5: 3 IP; 6: 3 IP and you find 50 × your level in zenit.",
+        "forge": "Camp forge",
+        "forgeText": "You: repair a group item, create a basic weapon, armor or shield for free, or break equipment down into a material.",
+        "massage": "Massage",
+        "massageText": "An ally: once, pays half the MP cost (not for rituals).",
+        "pep": "Pep talk",
+        "pepText": "An ally: once, doubles the MP they recover.",
+        "plan": "Planning",
+        "planText": "An ally: once, +4 when leading a group check or examining something or someone.",
+        "double": "Double portion",
+        "doubleText": "An ally: once, doubles the HP they recover.",
+        "sleep": "Deep sleep",
+        "sleepText": "You: once, one extra action on your turn (Equipment, Hinder or Inventory).",
+        "martial": "Martial training",
+        "martialText": "You: once, when attacking, gain multi (2) or +1 multi."
       }
     },
     "Sample": {
@@ -112,11 +173,24 @@
         "all": "Any player",
         "gm": "GM only"
       },
-      "flipSound": { "name": "Card flip sound", "hint": "Path of the audio file. Leave empty for no sound." },
-      "volume": { "name": "Card sound volume", "hint": "Only for this browser." },
-      "autoOpen": { "name": "Open the map when the GM shows it", "hint": "Opens the map automatically when the GM clicks Show to players." }
+      "flipSound": {
+        "name": "Card flip sound",
+        "hint": "Path of the audio file. Leave empty for no sound."
+      },
+      "volume": {
+        "name": "Card sound volume",
+        "hint": "Only for this browser."
+      },
+      "autoOpen": {
+        "name": "Open the map when the GM shows it",
+        "hint": "Opens the map automatically when the GM clicks Show to players."
+      }
     },
-    "Outcome": { "danger": "Danger!", "discovery": "Discovery!", "calm": "Quiet travel" },
+    "Outcome": {
+      "danger": "Danger!",
+      "discovery": "Discovery!",
+      "calm": "Quiet travel"
+    },
     "OutcomeHint": {
       "danger": "The GM describes a danger. The group may avoid it with a group check, a series of checks or, rarely, a conflict.",
       "discovery": "The group makes an unexpected discovery. Discoveries are always good.",
@@ -131,12 +205,17 @@
       "practical": "Resourceful: the Wayfarer recovers {n} IP.",
       "dangerTitle": "Danger: GM reminder",
       "dangerHow": "A danger should be avoidable with a group check or a series of checks; it rarely becomes a conflict. Damage by group level (core p. 108):",
-      "level": "Level", "dmgWeak": "Minor", "dmgStrong": "Heavy", "dmgIntense": "Massive",
+      "level": "Level",
+      "dmgWeak": "Minor",
+      "dmgStrong": "Heavy",
+      "dmgIntense": "Massive",
       "dangerLocked": "The group stays put until you release movement (lock on the map toolbar).",
       "dangerFree": "Movement stays allowed.",
       "dayEndTitle": "End of travel day {day}",
-      "dayEndText": "Threat of the day: {threat}. Roll the Travel Roll from the map toolbar whenever you like.",
-      "rules": "Rule"
+      "dayEndText": "Threat of the day: {threat} ({die}). Roll the Travel Roll with the Roll button on the map.",
+      "rules": "Rule",
+      "mana": "Latent {element} mana charges this place.",
+      "dayEndPlayers": "Threat of the day: {threat}. A player rolls the Travel Roll ({die}) with the Roll button on the map. The group travels on after the roll."
     },
     "Status": {
       "day": "Day {day}",
@@ -144,7 +223,9 @@
       "threat": "Threat: {threat} ({die})",
       "last": "Last roll: {total} on {die}, {outcome}",
       "locked": "Group stopped",
-      "pending": "Roll pending for day {day}"
+      "rollNow": "Roll the Travel Roll for day {day} ({die})",
+      "gmWillRoll": "Day {day}: the GM will roll the Travel Roll",
+      "lookfarWait": "Waiting for {name}'s roll in Lookfar"
     },
     "Reason": {
       "noGM": "A GM must be connected.",
@@ -163,7 +244,11 @@
       "notGM": "Request refused.",
       "noUser": "Request refused.",
       "unknownAction": "Request refused.",
-      "error": "Something went wrong. See the console (F12)."
+      "error": "Something went wrong. See the console (F12).",
+      "rollPending": "The day's Travel Roll is missing. Roll it before travelling on.",
+      "noPending": "There is no pending Travel Roll.",
+      "gmRolls": "On this map, the GM rolls the Travel Roll.",
+      "badDie": "That roll does not match the day's die."
     },
     "Notify": {
       "noGM": "A GM must be connected.",
@@ -174,9 +259,13 @@
       "imported": "Map imported: {name}",
       "importFailed": "Invalid file. Use a JSON exported by the Card Atlas.",
       "shown": "Map shown to the players.",
-      "shownPlayer": "The GM showed a map. Open it with the map button in the token controls."
+      "shownPlayer": "The GM showed a map. Open it with the map button in the token controls.",
+      "noActorImage": "That actor has no token image."
     },
-    "Hand": { "title": "Travel options", "play": "Play" },
+    "Hand": {
+      "title": "Travel options",
+      "play": "Play"
+    },
     "View": {
       "zoomIn": "Zoom in (+)",
       "zoomOut": "Zoom out (−)",
@@ -235,7 +324,15 @@
       "ping": "Ping",
       "remove": "Remove card"
     },
-    "Common": { "yes": "Yes", "no": "No", "save": "Save", "delete": "Delete", "up": "Move up", "down": "Move down" },
+    "Common": {
+      "yes": "Yes",
+      "no": "No",
+      "save": "Save",
+      "delete": "Delete",
+      "up": "Move up",
+      "down": "Move down",
+      "cancel": "Cancel"
+    },
     "New": {
       "title": "New map",
       "name": "Name",
@@ -259,7 +356,14 @@
       "sampleHint": "A ready 16 × 10 map with a village, road, forest, river, sea, dungeon and treasure.",
       "editHint": "Once created, everything can be edited: paint terrain, rename cards, move the group.",
       "start": "The group starts in {name}.",
-      "create": "Create map"
+      "create": "Create map",
+      "start_title": "Group start",
+      "start_village": "In a random village",
+      "start_city": "In the city",
+      "start_pick": "On the chosen card",
+      "startVillage": "Found a village on the chosen card",
+      "startHint": "Click a card in the preview to choose where the group starts.",
+      "startChosen": "Chosen: column {x}, row {y}."
     },
     "Theme": {
       "continent": "Continent",
@@ -301,7 +405,7 @@
       "size": "Size (columns × rows)",
       "sizeHint": "Growing adds plains cards; shrinking deletes the cards that no longer fit.",
       "tilt": "Table tilt",
-      "partyImg": "Group image",
+      "partyImg": "Custom image",
       "backImg": "Card back",
       "follow": "Camera follows the group",
       "exploration": "Exploration",
@@ -311,8 +415,6 @@
       "travel": "Travel (core p. 106)",
       "movesPerDay": "Cards per travel day",
       "movesPerDayHint": "How many cards the group walks in one travel day. The roll uses the highest threat among the day's cards.",
-      "autoRoll": "Roll the Travel Roll automatically",
-      "autoRollHint": "Off: at the end of the day the GM gets a reminder and rolls from the map toolbar.",
       "lockOnDanger": "Danger stops the group",
       "lockOnDangerHint": "On a danger, the group only walks again when the GM releases it.",
       "messageMode": "Who sees the Travel Roll",
@@ -323,7 +425,26 @@
       "wayfarerHint": "Tick what some PC has (core p. 176-177).",
       "veteran": "Well-Traveled (die one size smaller, minimum d6)",
       "treasureHunter": "Treasure Hunter (discovery on SL + 1 or less)",
-      "practical": "Resourceful (reminder: recover SL IP after each roll)"
+      "practical": "Resourceful (reminder: recover SL IP after each roll)",
+      "rollBy": "Who rolls the Travel Roll",
+      "rollBy_auto": "Automatic, at the end of each day",
+      "rollBy_gm": "The GM",
+      "rollBy_players": "The players",
+      "rollByHint": "With the GM or the players, a Roll button appears in the map's status line at the end of the day, and the group only travels on after the roll. The GM can always roll.",
+      "lookfar": "Roll through Lookfar",
+      "lookfarHint": "Opens the Lookfar module's Travel Check with the day's die already chosen. Lookfar's roll counts for the map, and Lookfar generates the danger or discovery. Use with The GM or The players in Who rolls.",
+      "lookfarMissing": "The Lookfar module is not active in this world. With this option on, the map keeps using its own Travel Roll.",
+      "tablePlaceholder": "Table UUID (drag a table here)",
+      "token": "Group token",
+      "actorDrop": "Drag an actor here to use its token",
+      "partyFrame": "Frame",
+      "frame_ring": "Ring (round)",
+      "frame_none": "No frame",
+      "partyFrameHint": "No frame shows the image as it is, good for tokens with a transparent background.",
+      "partyColor": "Ring colour",
+      "partyScale": "Size",
+      "partyLabel": "Name under the token",
+      "partyLabelHint": "Optional, for example the group's name"
     },
     "Terrains": {
       "title": "Terrain library",
@@ -366,6 +487,32 @@
       "reroll": "Reroll the last roll",
       "reveal": "Turn cards around",
       "macro": "Run macro"
+    },
+    "Token": {
+      "party": "Party",
+      "banner": "Banner",
+      "caravan": "Caravan",
+      "ship": "Ship",
+      "airship": "Airship",
+      "compass": "Compass",
+      "custom": "Custom image"
+    },
+    "Element": {
+      "air": "Air",
+      "bolt": "Bolt",
+      "dark": "Dark",
+      "earth": "Earth",
+      "fire": "Fire",
+      "ice": "Ice",
+      "light": "Light",
+      "poison": "Poison"
+    },
+    "Mana": {
+      "title": "Latent mana",
+      "none": "None",
+      "remove": "Remove mana",
+      "hidden": "Only the GM sees the mana",
+      "brush": "Paint latent {element} mana"
     }
   }
 }

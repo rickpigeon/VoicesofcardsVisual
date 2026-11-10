@@ -274,8 +274,11 @@ function makeNamer(rng) {
  * @param {string} p.seed    any text; the same text gives the same map
  * @param {string} [p.id]
  * @param {string} [p.name]
+ * @param {object} [p.start]  where the group starts: {mode: "village"} (a random village, the
+ *   default), {mode: "city"}, or {mode: "pick", x, y, village} (that card, or the nearest land
+ *   the group can walk from; `village: false` keeps its terrain instead of founding a village)
  */
-export function generateBoard({ theme = "continent", cols = 16, rows = 10, seed = "atlas", id = "", name = "" } = {}) {
+export function generateBoard({ theme = "continent", cols = 16, rows = 10, seed = "atlas", id = "", name = "", start: startOption = null } = {}) {
   const T = THEME[theme] ?? THEME.continent;
   cols = Math.max(LIMITS.min, Math.min(LIMITS.max, Math.floor(Number(cols) || 16)));
   rows = Math.max(LIMITS.min, Math.min(LIMITS.max, Math.floor(Number(rows) || 10)));
@@ -321,8 +324,16 @@ export function generateBoard({ theme = "continent", cols = 16, rows = 10, seed 
   const riverCount = Math.round(T.rivers * (land.length / 160) + (rng() * 0.6));
   for ( let r = 0; r < riverCount; r++ ) carveRiver(rng, G, terrain, elev, eRank, land, cols, rows);
 
-  // 4. Settlements: one city, then villages spread over the land.
-  const placed = [];
+  // 4. Settlements: one city, then villages spread over the land. A start picked by the GM
+  //    comes first (moved to the nearest walkable land when it falls in the sea).
+  let forced = null;
+  if ( startOption?.mode === "pick" && Number.isFinite(Number(startOption.x)) && Number.isFinite(Number(startOption.y)) ) {
+    const px = Math.max(0, Math.min(cols - 1, Math.floor(Number(startOption.x))));
+    const py = Math.max(0, Math.min(rows - 1, Math.floor(Number(startOption.y))));
+    forced = nearestIn(mainland, G.at(px, py), G);
+  }
+  const foundVillage = forced !== null && startOption.village !== false;
+  const placed = foundVillage ? [forced] : [];
   const candidates = [...mainland].filter(i => SETTLEMENT_SCORE[terrain[i]] !== undefined);
   const score = new Map(candidates.map(i => {
     const near = G.around(i).map(j => terrain[j]);
@@ -343,7 +354,8 @@ export function generateBoard({ theme = "continent", cols = 16, rows = 10, seed 
     spacing--;
   }
   if ( !placed.length ) placed.push(ordered[0] ?? [...mainland][0] ?? 0);
-  const city = landCount >= 45 ? placed[0] : null;
+  // The village founded at a picked start never becomes the city.
+  const city = landCount >= 45 ? (placed.find(i => !(foundVillage && i === forced)) ?? null) : null;
   const villages = placed.filter(i => i !== city);
   if ( city !== null ) terrain[city] = "city";
   for ( const i of villages ) terrain[i] = "village";
@@ -358,15 +370,18 @@ export function generateBoard({ theme = "continent", cols = 16, rows = 10, seed 
     }
   }
 
-  // 6. The group starts in a village.
-  const start = villages.length ? rng.pick(villages) : towns[0];
-  if ( !POI.has(terrain[start]) ) terrain[start] = "village";
+  // 6. The group starts in a village (or where the GM chose).
+  let start;
+  if ( forced !== null ) start = forced;
+  else if ( startOption?.mode === "city" && city !== null ) start = city;
+  else start = villages.length ? rng.pick(villages) : towns[0];
+  if ( forced === null && !POI.has(terrain[start]) ) terrain[start] = "village";
   const distFromStart = walkDistances(start, G, terrain, passable);
   const reach = all.filter(i => Number.isFinite(distFromStart[i]));
   const far = Math.max(1, ...reach.map(i => distFromStart[i]));
 
   // 7. Points of interest on reachable land, away from each other and from the towns.
-  const taken = new Set(towns);
+  const taken = new Set([...towns, start]);
   const free = i => !taken.has(i) && !POI.has(terrain[i]) && !["road", "river", "sea"].includes(terrain[i])
     && [...taken].every(j => G.dist(i, j) >= 2);
   const placeSome = (count, type, rate) => {
@@ -443,6 +458,21 @@ export function summarizeBoard(board) {
 
 function clampInt(v, lo, hi) {
   return Math.max(lo, Math.min(hi, Math.round(v)));
+}
+
+/** The cell of `set` closest to `i` (ties: the lower index), or `i` itself if it is in the set. */
+function nearestIn(set, i, G) {
+  if ( set.has(i) ) return i;
+  let best = null;
+  let bestD = Infinity;
+  for ( const j of set ) {
+    const d = G.dist(i, j);
+    if ( d < bestD || (d === bestD && j < best) ) {
+      best = j;
+      bestD = d;
+    }
+  }
+  return best ?? i;
 }
 
 function largestLandMass(land, G, terrain) {

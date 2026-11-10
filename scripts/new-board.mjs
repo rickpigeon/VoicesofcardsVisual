@@ -5,6 +5,7 @@
  */
 import { MODULE_ID, esc, loc, txt } from "./constants.mjs";
 import { createBoard, createSampleBoard } from "./defaults.mjs";
+import { revealAround } from "./rules.mjs";
 import { LIMITS, SIZES, THEMES, generateBoard, randomSeed, summarizeBoard } from "./generator.mjs";
 import { getActiveBoardId, getTerrainMap, getTerrains, saveBoard, setActiveBoard } from "./store.mjs";
 import { reportError } from "./errors.mjs";
@@ -16,9 +17,10 @@ const BLANK_LIMITS = { min: 2, max: 80 };
 export class NewBoardApp extends ApplicationV2 {
   constructor(options = {}) {
     super(options);
-    this.state = {
+    this.draft = {
       kind: "generate", theme: "continent", size: "medium", cols: 16, rows: 10,
-      seed: randomSeed(), name: "", fill: "plains"
+      seed: randomSeed(), name: "", fill: "plains",
+      startMode: "village", start: null, startVillage: true
     };
     this._busy = false;
     this._cache = { key: "", board: null };
@@ -45,7 +47,7 @@ export class NewBoardApp extends ApplicationV2 {
   /* -------------------------------------------- */
 
   async _renderHTML() {
-    const s = this.state;
+    const s = this.draft;
     const opt = (value, label, current) => `<option value="${esc(value)}" ${value === current ? "selected" : ""}>${esc(label)}</option>`;
     const kind = (k, icon) => `<button type="button" class="ca-new-kind${s.kind === k ? " is-on" : ""}" data-kind="${k}"><i class="${icon}"></i> ${esc(loc(`New.kind_${k}`))}</button>`;
     const sizes = Object.entries(SIZES).map(([k, [c, r]]) => opt(k, `${loc(`New.size_${k}`)} (${c} × ${r})`, s.size)).join("")
@@ -92,6 +94,12 @@ export class NewBoardApp extends ApplicationV2 {
               </div>
             </div>
             <p class="ca-new-hint" data-show="generate">${esc(loc("New.seedHint"))}</p>
+            <div class="ca-new-field" data-show="generate">
+              <label for="ca-new-start">${esc(loc("New.start_title"))}</label>
+              <select id="ca-new-start" name="startMode">${["village", "city", "pick"].map(k => opt(k, loc(`New.start_${k}`), s.startMode)).join("")}</select>
+            </div>
+            <label class="ca-new-check" data-show="pick"><input type="checkbox" name="startVillage" ${s.startVillage ? "checked" : ""}> ${esc(loc("New.startVillage"))}</label>
+            <p class="ca-new-hint ca-new-start-hint" data-show="generate blank" data-role="startHint"></p>
             <div class="ca-new-field" data-show="blank">
               <label for="ca-new-fill">${esc(loc("New.fill"))}</label>
               <select id="ca-new-fill" name="fill">${getTerrains().map(t => opt(t.id, txt(t.name), s.fill)).join("")}</select>
@@ -126,7 +134,7 @@ export class NewBoardApp extends ApplicationV2 {
     form.addEventListener("change", () => this.#update());
     for ( const btn of form.querySelectorAll("[data-kind]") ) {
       btn.addEventListener("click", () => {
-        this.state.kind = btn.dataset.kind;
+        this.draft.kind = btn.dataset.kind;
         this.#update();
       });
     }
@@ -134,17 +142,29 @@ export class NewBoardApp extends ApplicationV2 {
       form.elements.seed.value = randomSeed();
       this.#update();
     });
+    // Clicking a card of the preview chooses where the group starts.
+    const canvas = form.querySelector(".ca-new-preview canvas");
+    canvas.addEventListener("click", event => {
+      const g = this._grid;
+      if ( !g || this.draft.kind === "sample" ) return;
+      const x = Math.floor(event.offsetX / (g.size + g.gap));
+      const y = Math.floor(event.offsetY / (g.size + g.gap));
+      if ( x < 0 || y < 0 || x >= g.cols || y >= g.rows ) return;
+      this.draft.start = { x, y };
+      form.elements.namedItem("startMode").value = "pick";
+      this.#update();
+    });
     this.#update();
   }
 
   /* -------------------------------------------- */
 
-  /** Read the form into `state`, show the fields of the current kind and redraw the preview. */
+  /** Read the form into `draft`, show the fields of the current kind and redraw the preview. */
   #update() {
     try {
       const form = this.element?.querySelector(".ca-new-form");
       if ( !form ) return;
-      const s = this.state;
+      const s = this.draft;
       const field = n => form.elements.namedItem(n);
       const limits = s.kind === "blank" ? BLANK_LIMITS : LIMITS;
       s.name = field("name").value;
@@ -154,6 +174,8 @@ export class NewBoardApp extends ApplicationV2 {
       s.fill = field("fill").value;
       s.cols = clampSize(field("cols").value, s.cols, limits);
       s.rows = clampSize(field("rows").value, s.rows, limits);
+      s.startMode = field("startMode").value;
+      s.startVillage = field("startVillage").checked;
       for ( const n of ["cols", "rows"] ) {
         field(n).min = String(limits.min);
         field(n).max = String(limits.max);
@@ -165,12 +187,19 @@ export class NewBoardApp extends ApplicationV2 {
         field("rows").value = String(s.rows);
       }
       for ( const btn of form.querySelectorAll("[data-kind]") ) btn.classList.toggle("is-on", btn.dataset.kind === s.kind);
+      // A chosen start outside a resized grid is dropped.
+      if ( s.start && (s.start.x >= s.cols || s.start.y >= s.rows) ) s.start = null;
+      if ( s.startMode !== "pick" && s.kind === "generate" ) s.start = null;
       for ( const el of form.querySelectorAll("[data-show]") ) {
         const show = el.dataset.show.split(" ");
         const custom = show.includes("custom") && s.kind === "generate" && s.size === "custom";
-        el.hidden = !(show.includes(s.kind) || custom);
+        const pick = show.includes("pick") && s.kind === "generate" && s.startMode === "pick";
+        el.hidden = !(show.includes(s.kind) || custom || pick);
       }
       form.querySelector("[data-role=themeDesc]").textContent = loc(`ThemeDesc.${s.theme}`);
+      const hint = s.start ? loc("New.startChosen", { x: s.start.x + 1, y: s.start.y + 1 }) : "";
+      form.querySelector("[data-role=startHint]").textContent = `${loc("New.startHint")}${hint ? ` ${hint}` : ""}`;
+      form.querySelector(".ca-new-preview canvas").classList.toggle("is-pickable", s.kind !== "sample");
       field("name").placeholder = this.#defaultName();
       this.#drawPreview(this.#previewBoard());
     } catch ( err ) {
@@ -179,7 +208,7 @@ export class NewBoardApp extends ApplicationV2 {
   }
 
   #defaultName() {
-    const s = this.state;
+    const s = this.draft;
     if ( s.kind === "generate" ) return `${loc(`Theme.${s.theme}`)} ${s.seed}`;
     if ( s.kind === "sample" ) return loc("New.kind_sample");
     return loc("New.defaultName");
@@ -187,19 +216,27 @@ export class NewBoardApp extends ApplicationV2 {
 
   /** The board the current fields would create (cached while nothing changes). */
   #previewBoard() {
-    const s = this.state;
-    const key = s.kind === "generate" ? `g|${s.theme}|${s.cols}|${s.rows}|${s.seed}`
-      : s.kind === "blank" ? `b|${s.cols}|${s.rows}|${s.fill}` : "s";
+    const s = this.draft;
+    const at = s.start ? `${s.start.x},${s.start.y}` : "-";
+    const key = s.kind === "generate" ? `g|${s.theme}|${s.cols}|${s.rows}|${s.seed}|${s.startMode}|${at}|${s.startVillage}`
+      : s.kind === "blank" ? `b|${s.cols}|${s.rows}|${s.fill}|${at}` : "s";
     if ( this._cache.key !== key ) this._cache = { key, board: this.#build("preview") };
     return this._cache.board;
   }
 
   #build(id) {
-    const s = this.state;
+    const s = this.draft;
     const name = s.name.trim() || this.#defaultName();
     if ( s.kind === "sample" ) return createSampleBoard({ id, name });
-    if ( s.kind === "blank" ) return createBoard({ id, name, cols: s.cols, rows: s.rows, fill: s.fill || "plains" });
-    return generateBoard({ id, name, theme: s.theme, cols: s.cols, rows: s.rows, seed: s.seed });
+    if ( s.kind === "blank" ) {
+      const board = createBoard({ id, name, cols: s.cols, rows: s.rows, fill: s.fill || "plains" });
+      if ( s.start ) moveStart(board, s.start);
+      return board;
+    }
+    const start = s.startMode === "pick" && s.start
+      ? { mode: "pick", x: s.start.x, y: s.start.y, village: s.startVillage }
+      : { mode: s.startMode === "city" ? "city" : "village" };
+    return generateBoard({ id, name, theme: s.theme, cols: s.cols, rows: s.rows, seed: s.seed, start });
   }
 
   #drawPreview(board) {
@@ -212,6 +249,7 @@ export class NewBoardApp extends ApplicationV2 {
     const size = Math.max(4, Math.floor(Math.min((maxW + gap) / board.cols, (maxH + gap) / board.rows)) - gap);
     const w = (board.cols * (size + gap)) - gap;
     const h = (board.rows * (size + gap)) - gap;
+    this._grid = { size, gap, cols: board.cols, rows: board.rows };
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
@@ -287,6 +325,14 @@ export class NewBoardApp extends ApplicationV2 {
       this._busy = false;
     }
   }
+}
+
+/** Blank map: put the group on the chosen card instead of the middle. */
+function moveStart(board, { x, y }) {
+  for ( const c of board.cells ) if ( c ) { c.revealed = false; c.visited = false; }
+  board.party = { x, y };
+  board.cells[(y * board.cols) + x].visited = true;
+  revealAround(board, x, y, board.config.revealRadius);
 }
 
 function clampSize(value, fallback, limits) {

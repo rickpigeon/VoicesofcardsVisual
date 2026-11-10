@@ -12,6 +12,26 @@ export const THREAT_KEYS = ["minimal", "low", "medium", "high", "veryHigh"];
 export const THREAT_DIE = { minimal: 6, low: 8, medium: 10, high: 12, veryHigh: 20 };
 export const DIE_STEPS = [6, 8, 10, 12, 20];
 
+/**
+ * Elements for latent mana: Fabula Ultima's damage types except physical (Livro Básico).
+ * Keys match the projectfu system's damage types; names come from CARDATLAS.Element.*.
+ */
+export const ELEMENTS = {
+  air: { icon: "fa-solid fa-wind", color: "#9be7c4" },
+  bolt: { icon: "fa-solid fa-bolt", color: "#ffe34d" },
+  dark: { icon: "fa-solid fa-moon", color: "#a77bff" },
+  earth: { icon: "fa-solid fa-mountain", color: "#d3a356" },
+  fire: { icon: "fa-solid fa-fire", color: "#ff7a2f" },
+  ice: { icon: "fa-solid fa-snowflake", color: "#8fe3ff" },
+  light: { icon: "fa-solid fa-sun", color: "#fff1a8" },
+  poison: { icon: "fa-solid fa-skull-crossbones", color: "#86e05a" }
+};
+export const ELEMENT_KEYS = Object.keys(ELEMENTS);
+
+export function elementLabel(key) {
+  return ELEMENTS[key] ? loc(`Element.${key}`) : "";
+}
+
 /** Hand-card actions that the GM client has to execute. */
 export const GM_ACTIONS = new Set(["travelRoll", "reroll", "reveal"]);
 export const OPTION_ACTIONS = ["chat", "travelRoll", "reroll", "reveal", "macro"];
@@ -54,6 +74,14 @@ export function stepDownDie(die, steps = 0) {
 
 export function threatLabel(key) {
   return loc(`Threat.${THREAT_KEYS.includes(key) ? key : "low"}`);
+}
+
+/** Yes/No buttons in this module's language (Foundry's own labels follow the core language). */
+export function confirmButtons() {
+  return {
+    yes: { label: loc("Common.yes"), icon: "fa-solid fa-check" },
+    no: { label: loc("Common.no"), icon: "fa-solid fa-xmark" }
+  };
 }
 
 export function clamp(n, min, max) {

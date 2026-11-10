@@ -2,7 +2,7 @@
  * Chat cards: Travel Roll, end of a travel day, first arrival at a card, played travel options.
  * User-written text is escaped; @UUID[...] links still work because chat content is enriched.
  */
-import { esc, loc, threatLabel, txt } from "./constants.mjs";
+import { ELEMENTS, elementLabel, esc, loc, threatLabel, txt } from "./constants.mjs";
 import { applyVisibility, visibilityOptions } from "./compat.mjs";
 
 const CM = () => foundry.documents.ChatMessage.implementation;
@@ -17,8 +17,11 @@ function speakerFor(board) {
   return CM().getSpeaker({ alias: board?.name || loc("Title") });
 }
 
-/** The Travel Roll itself, posted through Roll#toMessage so dice animations work. */
-export async function postTravelRoll(board, r) {
+/**
+ * The Travel Roll itself, posted through Roll#toMessage so dice animations work.
+ * `speaker` defaults to the board; a player's own roll is posted as that player.
+ */
+export async function postTravelRoll(board, r, { speaker = null } = {}) {
   const mods = [];
   if ( r.die !== r.baseDie ) mods.push(loc("Chat.veteran", { from: `d${r.baseDie}`, to: `d${r.die}` }));
   if ( r.discoveryMax > 1 ) mods.push(loc("Chat.treasureHunter", { max: r.discoveryMax }));
@@ -32,7 +35,7 @@ export async function postTravelRoll(board, r) {
     <p class="ca-hint">${esc(loc(`OutcomeHint.${r.outcome}`))}</p>
     ${practical ? `<p class="ca-mod">${esc(loc("Chat.practical", { n: practical }))}</p>` : ""}
   </div>`;
-  return r.roll.toMessage({ speaker: speakerFor(board), flavor }, visibilityOptions(board.config.messageMode));
+  return r.roll.toMessage({ speaker: speaker ?? speakerFor(board), flavor }, visibilityOptions(board.config.messageMode));
 }
 
 /** GM-only reminder after a danger: how to resolve it and the damage table (LB p. 108). */
@@ -62,22 +65,26 @@ export async function drawOutcomeTable(board, outcome) {
   return table.draw({ displayChat: true, ...visibilityOptions(board.config.messageMode) });
 }
 
-/** Autoroll off: tell the GM that a day ended and which die to roll. */
-export async function postDayEnd(board, { day, threat }) {
-  const content = `<div class="card-atlas-chat ca-gm">
+/** A day ended without an automatic roll: say which die to roll and who rolls it. */
+export async function postDayEnd(board, { day, threat, die }) {
+  const players = board.config.rollBy === "players";
+  const text = loc(players ? "Chat.dayEndPlayers" : "Chat.dayEndText", { threat: threatLabel(threat), die: `d${die}` });
+  const content = `<div class="card-atlas-chat ${players ? "ca-dayend" : "ca-gm"}">
     <header><i class="fa-solid fa-sun"></i> ${esc(loc("Chat.dayEndTitle", { day }))}</header>
-    <p>${esc(loc("Chat.dayEndText", { threat: threatLabel(threat) }))}</p>
+    <p>${esc(text)}</p>
   </div>`;
-  return CM().create(applyVisibility({ content, speaker: speakerFor(board) }, "gm"));
+  return CM().create(applyVisibility({ content, speaker: speakerFor(board) }, players ? "public" : "gm"));
 }
 
 /** First arrival at a card that has a message and/or a linked document. */
 export async function postEnterMessage(board, cell, terrain) {
   const title = cell.label || txt(terrain?.name) || cell.terrain;
   const link = cell.link ? `<p class="ca-link">@UUID[${esc(cell.link)}]</p>` : "";
+  const el = !cell.manaHidden ? ELEMENTS[cell.mana] : null;
+  const mana = el ? `<p class="ca-mana-line" style="--ca-mana:${el.color}"><i class="${el.icon}"></i> ${esc(loc("Chat.mana", { element: elementLabel(cell.mana) }))}</p>` : "";
   const content = `<div class="card-atlas-chat ca-enter">
     <header><i class="fa-solid fa-location-dot"></i> ${esc(title)}</header>
-    ${paragraphs(txt(cell.text))}${link}
+    ${paragraphs(txt(cell.text))}${mana}${link}
   </div>`;
   return CM().create({ content, speaker: speakerFor(board) });
 }

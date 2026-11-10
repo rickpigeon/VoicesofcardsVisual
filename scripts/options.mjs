@@ -6,6 +6,7 @@ import { esc, loc, txt } from "./constants.mjs";
 import { postOptionCard } from "./chat.mjs";
 import { needsGM, request } from "./engine.mjs";
 import { getBoard, getOptions } from "./store.mjs";
+import { rollTravelNow } from "./travel.mjs";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -69,6 +70,7 @@ export async function playOption(boardId, optionId) {
       classes: ["card-atlas-dialog-app"],
       content: dialogBody(option),
       yes: { label: loc("Hand.play"), icon: "fa-solid fa-hand" },
+      no: { label: loc("Common.cancel"), icon: "fa-solid fa-xmark" },
       rejectClose: false
     });
     if ( !ok ) return;
@@ -85,5 +87,10 @@ export async function playOption(boardId, optionId) {
   }
 
   await postOptionCard(option, { choice, text });
+  // With players rolling, a "Travel Roll" card rolls the pending day on this player's client.
+  const board = getBoard(boardId);
+  if ( option.action === "travelRoll" && !option.step && board?.travel.pending && board.config.rollBy === "players" ) {
+    return rollTravelNow(boardId);
+  }
   if ( needsGM(option) ) await request("option", { boardId, optionId });
 }

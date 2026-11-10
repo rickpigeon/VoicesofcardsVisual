@@ -15,13 +15,17 @@ const PAD = 60;
 const FLIP_MS = 720;
 const ZOOM_MIN = 0.3;
 const ZOOM_MAX = 2.2;
+// Fixed, scattered positions (in % of the card) for the 7 latent-mana particles.
+const MANA_X = [16, 68, 40, 84, 28, 56, 8];
+const MANA_Y = [70, 28, 54, 78, 16, 62, 40];
 
 export class BoardView {
-  constructor(root, { t = k => k, onAction = () => {}, assets = {} } = {}) {
+  constructor(root, { t = k => k, onAction = () => {}, assets = {}, elements = {} } = {}) {
     this.root = root;
     this.t = t;
     this.onAction = onAction;
     this.assets = assets;
+    this.elements = elements;
     this.doc = root.ownerDocument;
     this.board = null;
     this.terrains = new Map();
@@ -53,7 +57,7 @@ export class BoardView {
     this.boardEl.className = "ca-board";
     this.pawn = d.createElement("div");
     this.pawn.className = "ca-pawn";
-    this.pawn.innerHTML = '<div class="ca-pawn__shadow"></div><div class="ca-pawn__token"><div class="ca-pawn__img"></div></div>';
+    this.pawn.innerHTML = '<div class="ca-pawn__shadow"></div><div class="ca-pawn__token"><div class="ca-pawn__img"></div></div><div class="ca-pawn__label" hidden></div>';
     this.stage.append(this.boardEl);
     this.viewport.append(this.stage);
     this.root.append(this.viewport);
@@ -261,13 +265,14 @@ export class BoardView {
     const banner = el.querySelector(".ca-banner");
     const marks = el.querySelector(".ca-marks");
     if ( !cell || !showFront ) {
-      // Players never get the face of a hidden card in their DOM.
+      // Players never get the face of a hidden card in their DOM (nor its latent mana).
       if ( art.dataset.src ) { art.style.backgroundImage = ""; art.dataset.src = ""; }
       banner.textContent = "";
       banner.hidden = true;
       el.removeAttribute("data-tooltip-text");
       cl.remove("is-blocked");
       marks.replaceChildren();
+      this.#applyMana(el, null);
       if ( cell && this.mode.isGM ) this.#gmMarks(marks, cell, i);
       return;
     }
@@ -284,7 +289,10 @@ export class BoardView {
     banner.hidden = !label;
     cl.toggle("is-blocked", !isPassable(cell, this.terrains));
     const threat = cell.threat || terrain?.threat || "low";
-    const tip = `${label && label !== name ? `${label} · ` : ""}${name} · ${this.t(`CARDATLAS.Threat.${threat}`)}`;
+    const manaShown = this.elements[cell.mana] && (this.mode.isGM || !cell.manaHidden) ? cell.mana : null;
+    this.#applyMana(el, manaShown, !!cell.manaHidden);
+    const manaTip = manaShown ? ` · ${this.t("CARDATLAS.Mana.title")}: ${this.t(`CARDATLAS.Element.${manaShown}`)}` : "";
+    const tip = `${label && label !== name ? `${label} · ` : ""}${name} · ${this.t(`CARDATLAS.Threat.${threat}`)}${manaTip}`;
     el.setAttribute("data-tooltip-text", tip);
     marks.replaceChildren();
     if ( this.mode.isGM ) this.#gmMarks(marks, cell, i);
@@ -296,6 +304,39 @@ export class BoardView {
       btn.innerHTML = '<i class="fa-solid fa-book-open"></i>';
       marks.append(btn);
     }
+  }
+
+  /**
+   * Latent mana: an animated aura and particles in the element's colour over the card.
+   * The overlay only exists while the card's face is shown, and is removed otherwise.
+   */
+  #applyMana(el, element, gmOnly = false) {
+    let fx = el.querySelector(":scope > .ca-mana");
+    if ( !element ) {
+      fx?.remove();
+      el.classList.remove("has-mana");
+      return;
+    }
+    const info = this.elements[element];
+    if ( !fx ) {
+      fx = this.doc.createElement("div");
+      fx.className = "ca-mana";
+      let html = '<span class="ca-mana__aura"></span><span class="ca-mana__veil"></span>';
+      for ( let k = 0; k < 7; k++ ) {
+        html += `<span class="ca-mana__p" style="--i:${k};--x:${MANA_X[k]}%;--y:${MANA_Y[k]}%"></span>`;
+      }
+      html += '<span class="ca-mana__icon"><i></i></span>';
+      fx.innerHTML = html;
+      el.querySelector(".ca-card").after(fx);
+    }
+    if ( fx.dataset.element !== element ) {
+      fx.dataset.element = element;
+      fx.className = `ca-mana ca-mana--${element}`;
+      fx.style.setProperty("--ca-mana", info.color);
+      fx.querySelector(".ca-mana__icon i").className = info.icon;
+    }
+    fx.classList.toggle("is-gm-only", gmOnly && this.mode.isGM);
+    el.classList.add("has-mana");
   }
 
   #gmMarks(marks, cell, i) {
@@ -316,10 +357,7 @@ export class BoardView {
     const p = this.board.party;
     this.pawn.hidden = !p;
     if ( !p ) return;
-    const img = this.board.config.partyImg || this.assets.pawn || "";
-    const imgEl = this.pawn.querySelector(".ca-pawn__img");
-    const css = img ? `url("${img}")` : "";
-    if ( imgEl.style.backgroundImage !== css ) imgEl.style.backgroundImage = css;
+    this.#styleToken(this.board.config);
     const moved = this.lastParty && (this.lastParty.x !== p.x || this.lastParty.y !== p.y);
     this.pawn.style.transform = `translate(${PAD + (p.x * (CARD_W + GAP))}px, ${PAD + (p.y * (CARD_H + GAP))}px)`;
     if ( moved && animate ) {
@@ -329,6 +367,23 @@ export class BoardView {
       if ( this.board.config.follow !== false ) setTimeout(() => this.centerOn(p, true), 60);
     }
     this.lastParty = { x: p.x, y: p.y };
+  }
+
+  /** The group's token: built-in art or a custom image, ring or no frame, colour, size, label. */
+  #styleToken(c) {
+    const tokens = this.assets.tokens ?? {};
+    const custom = c.partyToken === "custom" && c.partyImg;
+    const img = custom ? c.partyImg : (tokens[c.partyToken] ?? tokens.party ?? "");
+    const imgEl = this.pawn.querySelector(".ca-pawn__img");
+    const css = img ? `url("${img}")` : "";
+    if ( imgEl.style.backgroundImage !== css ) imgEl.style.backgroundImage = css;
+    this.pawn.classList.toggle("is-frameless", c.partyFrame === "none");
+    this.pawn.style.setProperty("--ca-pawn-scale", String((Number(c.partyScale) || 100) / 100));
+    this.pawn.style.setProperty("--ca-pawn-ring", c.partyColor || "#d8b25e");
+    const label = this.pawn.querySelector(".ca-pawn__label");
+    const text = String(c.partyLabel ?? "").trim();
+    label.textContent = text;
+    label.hidden = !text;
   }
 
   #updateTargets() {
@@ -449,8 +504,17 @@ export class BoardView {
     if ( d.touched.has(i) ) return;
     const b = this.board;
     if ( this.mode.tool === "paint" ) {
-      d.touched.add(i);
       const brush = this.mode.brush;
+      if ( brush.startsWith("mana:") ) {
+        // Latent mana only goes on existing cards and keeps their terrain.
+        if ( !b.cells[i] ) return;
+        d.touched.add(i);
+        const element = brush.slice(5);
+        b.cells[i] = { ...b.cells[i], mana: element === "none" ? "" : element };
+        this.#applyCell(el, i, b.cells[i], b.cells[i].revealed || (this.mode.isGM && this.mode.peek));
+        return;
+      }
+      d.touched.add(i);
       b.cells[i] = brush === "__empty" ? null : { ...(b.cells[i] ?? {}), terrain: brush, img: "" };
       this.#applyCell(el, i, b.cells[i], !!b.cells[i] && (b.cells[i].revealed || (this.mode.isGM && this.mode.peek)));
       return;

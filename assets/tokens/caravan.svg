@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4e7f6a"/><stop offset="1" stop-color="#1f3b33"/></linearGradient>
+    <linearGradient id="canvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf0d2"/><stop offset="1" stop-color="#d9c494"/></linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="60" fill="url(#bg)"/>
+  <path d="M8 98 Q60 86 112 98 L120 120 L0 120 Z" fill="#a86b4c"/>
+  <path d="M8 98 Q60 86 112 98" fill="none" stroke="#c88a63" stroke-width="2" stroke-dasharray="6 6"/>
+  <path d="M30 70 Q30 34 60 34 Q90 34 90 70 Z" fill="url(#canvas)" stroke="#6b4a2a" stroke-width="2.5"/>
+  <path d="M45 70 Q44 40 60 36 M75 70 Q76 40 60 36" fill="none" stroke="#b99a60" stroke-width="2"/>
+  <rect x="24" y="68" width="72" height="14" rx="3" fill="#7a4b2a" stroke="#4a2d16" stroke-width="2"/>
+  <line x1="96" y1="76" x2="110" y2="80" stroke="#4a2d16" stroke-width="3" stroke-linecap="round"/>
+  <g stroke="#2a1a0c" stroke-width="2.2" fill="#d9b25b">
+    <circle cx="38" cy="86" r="10"/><circle cx="82" cy="86" r="10"/>
+  </g>
+  <g stroke="#2a1a0c" stroke-width="1.6">
+    <line x1="38" y1="76" x2="38" y2="96"/><line x1="28" y1="86" x2="48" y2="86"/><line x1="31" y1="79" x2="45" y2="93"/><line x1="45" y1="79" x2="31" y2="93"/>
+    <line x1="82" y1="76" x2="82" y2="96"/><line x1="72" y1="86" x2="92" y2="86"/><line x1="75" y1="79" x2="89" y2="93"/><line x1="89" y1="79" x2="75" y2="93"/>
+  </g>
+  <circle cx="38" cy="86" r="2.4" fill="#2a1a0c"/><circle cx="82" cy="86" r="2.4" fill="#2a1a0c"/>
+  <path d="M58 52 l2 4.2 l4.6 0.6 l-3.4 3.2 l0.9 4.6 l-4.1 -2.3 l-4.1 2.3 l0.9 -4.6 l-3.4 -3.2 l4.6 -0.6 Z" fill="#c6402c"/>
+</svg>
