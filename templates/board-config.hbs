@@ -1,0 +1,101 @@
+<div class="ca-editor-body">
+  <div class="ca-scroll">
+    <fieldset>
+      <legend>{{localize "CARDATLAS.Config.map"}}</legend>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.name"}}</label>
+        <input type="text" name="name" value="{{board.name}}">
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.size"}}</label>
+        <div class="form-fields">
+          <input type="number" name="cols" value="{{board.cols}}" min="2" max="80" step="1" aria-label="{{localize 'CARDATLAS.New.cols'}}">
+          <span>×</span>
+          <input type="number" name="rows" value="{{board.rows}}" min="2" max="80" step="1" aria-label="{{localize 'CARDATLAS.New.rows'}}">
+        </div>
+        <p class="hint">{{localize "CARDATLAS.Config.sizeHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.tilt"}}</label>
+        <div class="form-fields"><input type="number" name="config.tilt" value="{{config.tilt}}" min="0" max="40" step="1"> <span>°</span></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.partyImg"}}</label>
+        <div class="form-fields"><file-picker name="config.partyImg" type="image" value="{{config.partyImg}}"></file-picker></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.backImg"}}</label>
+        <div class="form-fields"><file-picker name="config.backImg" type="image" value="{{config.backImg}}"></file-picker></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.follow"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.follow" {{checked config.follow}}></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>{{localize "CARDATLAS.Config.exploration"}}</legend>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.revealRadius"}}</label>
+        <div class="form-fields"><select name="config.revealRadius">{{selectOptions revealChoices selected=config.revealRadius}}</select></div>
+        <p class="hint">{{localize "CARDATLAS.Config.revealRadiusHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.diagonal"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.diagonal" {{checked config.diagonal}}></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>{{localize "CARDATLAS.Config.travel"}}</legend>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.movesPerDay"}}</label>
+        <div class="form-fields"><input type="number" name="config.movesPerDay" value="{{config.movesPerDay}}" min="1" max="50" step="1"></div>
+        <p class="hint">{{localize "CARDATLAS.Config.movesPerDayHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.autoRoll"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.autoRoll" {{checked config.autoRoll}}></div>
+        <p class="hint">{{localize "CARDATLAS.Config.autoRollHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.lockOnDanger"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.lockOnDanger" {{checked config.lockOnDanger}}></div>
+        <p class="hint">{{localize "CARDATLAS.Config.lockOnDangerHint"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.messageMode"}}</label>
+        <div class="form-fields"><select name="config.messageMode">{{selectOptions modeChoices selected=config.messageMode}}</select></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.dangerTable"}}</label>
+        <div class="form-fields"><input type="text" name="config.dangerTable" value="{{config.dangerTable}}" placeholder="RollTable UUID" data-uuid-drop></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.discoveryTable"}}</label>
+        <div class="form-fields"><input type="text" name="config.discoveryTable" value="{{config.discoveryTable}}" placeholder="RollTable UUID" data-uuid-drop></div>
+        <p class="hint">{{localize "CARDATLAS.Config.tablesHint"}}</p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>{{localize "CARDATLAS.Config.wayfarer"}}</legend>
+      <p class="hint">{{localize "CARDATLAS.Config.wayfarerHint"}}</p>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.veteran"}}</label>
+        <div class="form-fields"><input type="checkbox" name="config.veteran" {{checked config.veteran}}></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.treasureHunter"}}</label>
+        <div class="form-fields"><select name="config.treasureHunter">{{selectOptions hunterChoices selected=config.treasureHunter}}</select></div>
+      </div>
+      <div class="form-group">
+        <label>{{localize "CARDATLAS.Config.practical"}}</label>
+        <div class="form-fields"><select name="config.practical">{{selectOptions practicalChoices selected=config.practical}}</select></div>
+      </div>
+    </fieldset>
+  </div>
+  <footer class="form-footer">
+    <button type="submit"><i class="fa-solid fa-floppy-disk"></i> {{localize "CARDATLAS.Common.save"}}</button>
+  </footer>
+</div>

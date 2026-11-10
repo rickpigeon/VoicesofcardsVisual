@@ -1,0 +1,721 @@
+/* ==========================================================================
+   Atlas de Cartas / Card Atlas
+   ========================================================================== */
+
+.card-atlas-window {
+  --ca-w: 100px;
+  --ca-h: 140px;
+  --ca-gap: 12px;
+  --ca-gold: #d8b25e;
+  --ca-gold-dim: #9c7d3c;
+  --ca-ink: #f3ead6;
+  --ca-ink-dim: #c9bda3;
+  --ca-panel: #1d1a17;
+  --ca-panel-2: #2a2622;
+  --ca-line: #4a4036;
+  --ca-table-1: #2b3a2f;
+  --ca-table-2: #141b16;
+  --ca-cream: #efe3c4;
+  --ca-danger: #e0604a;
+  --ca-discovery: #6cc7a1;
+  --ca-calm: #b9c3cf;
+}
+
+.card-atlas-window .window-content {
+  padding: 0;
+  overflow: clip;
+  background: var(--ca-panel);
+  color: var(--ca-ink);
+}
+
+.card-atlas-window .ca-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  font-family: var(--font-body, "Signika", sans-serif);
+}
+
+/* ---------- toolbar (GM) ---------- */
+.card-atlas-window .ca-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 6px 8px;
+  background: linear-gradient(#2c2721, #211d19);
+  border-bottom: 1px solid var(--ca-line);
+}
+.card-atlas-window .ca-group { display: flex; align-items: center; gap: 4px; }
+.card-atlas-window .ca-group.ca-right { margin-left: auto; }
+.card-atlas-window .ca-toolbar button,
+.card-atlas-window .ca-zoom button,
+.card-atlas-window .ca-side button,
+.card-atlas-window .ca-empty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  margin: 0;
+  border: 1px solid var(--ca-line);
+  border-radius: 6px;
+  background: var(--ca-panel-2);
+  color: var(--ca-ink);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+}
+.card-atlas-window .ca-toolbar button:hover,
+.card-atlas-window .ca-zoom button:hover,
+.card-atlas-window .ca-side button:hover,
+.card-atlas-window .ca-empty button:hover { border-color: var(--ca-gold-dim); color: #fff; }
+.card-atlas-window .ca-toolbar button:focus-visible,
+.card-atlas-window .ca-zoom button:focus-visible,
+.card-atlas-window .ca-hcard:focus-visible { outline: 2px solid var(--ca-gold); outline-offset: 2px; }
+.card-atlas-window .ca-toolbar button.is-on {
+  background: linear-gradient(#5b4722, #3d3018);
+  border-color: var(--ca-gold);
+  color: #fff3d0;
+}
+.card-atlas-window .ca-toolbar button.is-pulse { animation: ca-pulse 1.4s ease-in-out infinite; border-color: var(--ca-gold); }
+.card-atlas-window .ca-toolbar .ca-show { padding: 0 10px; }
+.card-atlas-window .ca-board-select {
+  height: 32px;
+  min-width: 160px;
+  max-width: 240px;
+  background: var(--ca-panel-2);
+  color: var(--ca-ink);
+  border: 1px solid var(--ca-line);
+  border-radius: 6px;
+}
+
+/* ---------- terrain palette ---------- */
+.card-atlas-window .ca-palette {
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  overflow-x: auto;
+  background: #191613;
+  border-bottom: 1px solid var(--ca-line);
+}
+.card-atlas-window .ca-palette[hidden] { display: none; }
+.card-atlas-window .ca-chip-terrain {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 64px;
+  padding: 4px 2px;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ca-ink-dim);
+  font-size: 11px;
+  line-height: 1.1;
+  cursor: pointer;
+}
+.card-atlas-window .ca-chip-terrain span:last-child { max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-atlas-window .ca-chip-terrain:hover { color: #fff; border-color: var(--ca-line); }
+.card-atlas-window .ca-chip-terrain.is-on { border-color: var(--ca-gold); color: #fff3d0; background: #2b241a; }
+.card-atlas-window .ca-swatch {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 42px;
+  border-radius: 4px;
+  background: var(--ca-terrain, #555) center / cover no-repeat;
+  box-shadow: 0 0 0 2px var(--ca-cream), 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: var(--ca-ink);
+}
+.card-atlas-window .is-eraser .ca-swatch { background: repeating-linear-gradient(45deg, #2a2622 0 6px, #34302a 6px 12px); box-shadow: 0 0 0 1px var(--ca-line); }
+
+/* ---------- layout ---------- */
+.card-atlas-window .ca-main { flex: 1; display: flex; min-height: 0; }
+/* clip (not hidden): focusing a hand card must never scroll the table */
+.card-atlas-window .ca-table { position: relative; flex: 1; min-width: 0; overflow: clip; }
+.card-atlas-window .ca-side {
+  width: 290px;
+  flex: 0 0 290px;
+  overflow-y: auto;
+  padding: 10px 12px 16px;
+  background: var(--ca-panel);
+  border-left: 1px solid var(--ca-line);
+}
+.card-atlas-window .ca-side[hidden] { display: none; }
+.card-atlas-window .ca-side h3 {
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--ca-line);
+  color: var(--ca-gold);
+  font-size: 15px;
+}
+.card-atlas-window .ca-field { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+.card-atlas-window .ca-field > label { color: var(--ca-ink-dim); font-size: 12px; }
+.card-atlas-window .ca-field.ca-check > label { flex-direction: row; display: flex; align-items: center; gap: 6px; color: var(--ca-ink); }
+.card-atlas-window .ca-side input[type="text"],
+.card-atlas-window .ca-side select,
+.card-atlas-window .ca-side textarea,
+.card-atlas-window .ca-side file-picker input {
+  width: 100%;
+  background: #12100e;
+  color: var(--ca-ink);
+  border: 1px solid var(--ca-line);
+  border-radius: 4px;
+  font-size: 13px;
+}
+.card-atlas-window .ca-side textarea { resize: vertical; min-height: 54px; }
+.card-atlas-window .ca-side-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.card-atlas-window .ca-muted { color: var(--ca-ink-dim); }
+
+/* ---------- table / viewport ---------- */
+.card-atlas-window .ca-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(ellipse at 50% 50%, var(--ca-table-1), var(--ca-table-2) 75%);
+}
+.card-atlas-window .ca-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.65);
+}
+.card-atlas-window .ca-viewport.is-panning { cursor: grabbing; }
+.card-atlas-window .ca-stage { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+.card-atlas-window .ca-stage.is-gliding { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+
+.card-atlas-window .ca-board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--ca-cols), var(--ca-w));
+  grid-template-rows: repeat(var(--ca-rows), var(--ca-h));
+  gap: var(--ca-gap);
+  padding: 60px;
+  transform: perspective(2200px) rotateX(var(--ca-tilt, 18deg));
+  transform-origin: 50% 50%;
+}
+
+/* ---------- cards ---------- */
+.card-atlas-window .ca-cell { position: relative; width: var(--ca-w); height: var(--ca-h); }
+.card-atlas-window .ca-card {
+  position: absolute;
+  inset: 0;
+  perspective: 900px;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.card-atlas-window .ca-card__inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.72s cubic-bezier(0.3, 0.75, 0.35, 1.15);
+  transition-delay: var(--ca-delay, 0ms);
+}
+.card-atlas-window .ca-cell.show-front .ca-card__inner { transform: rotateY(180deg); }
+.card-atlas-window .ca-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.card-atlas-window .ca-face--back {
+  background: var(--ca-back, url("../assets/card-back.svg")) center / cover no-repeat, #24262b;
+}
+.card-atlas-window .ca-face--front {
+  transform: rotateY(180deg);
+  background: var(--ca-cream);
+}
+.card-atlas-window .ca-face__art {
+  position: absolute;
+  inset: 4px;
+  border-radius: 4px;
+  background-color: var(--ca-terrain, #6b7a3a);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.card-atlas-window .ca-banner {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 7px;
+  padding: 3px 4px 2px;
+  border-radius: 3px;
+  background: linear-gradient(#f6ecd2, #e2d2ab);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #3b2b19;
+  font-family: "Modesto Condensed", "Palatino Linotype", Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-atlas-window .ca-banner[hidden] { display: none; }
+
+/* lift while turning */
+.card-atlas-window .ca-cell.is-flipping .ca-card {
+  animation: ca-lift 0.72s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+  animation-delay: var(--ca-delay, 0ms);
+  z-index: 3;
+}
+@keyframes ca-lift {
+  0% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0)); }
+  45% { transform: translateY(-10px) scale(1.12); filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.45)); }
+  100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0)); }
+}
+
+/* GM sees hidden cards through a veil, which fades when the card is revealed */
+.card-atlas-window .ca-face--front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(20, 22, 28, 0.55) 0 8px, rgba(20, 22, 28, 0.38) 8px 16px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  transition-delay: var(--ca-delay, 0ms);
+}
+.card-atlas-window .ca-cell.is-veiled .ca-face--front::after { opacity: 1; transition-delay: 0ms; }
+
+.card-atlas-window .ca-cell.is-empty .ca-card { display: none; }
+.card-atlas-window .ca-app.is-gm .ca-table.tool-paint .ca-cell.is-empty,
+.card-atlas-window .ca-app.is-gm .ca-table.tool-select .ca-cell.is-empty {
+  border-radius: 7px;
+  outline: 2px dashed rgba(255, 255, 255, 0.18);
+  outline-offset: -2px;
+}
+
+/* walkable neighbours */
+.card-atlas-window .ca-cell.is-target { cursor: pointer; }
+.card-atlas-window .ca-cell.is-target .ca-card::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 9px;
+  border: 2px solid rgba(255, 221, 140, 0.55);
+  box-shadow: 0 0 12px rgba(255, 210, 120, 0.35);
+  pointer-events: none;
+  animation: ca-glow 1.8s ease-in-out infinite;
+}
+.card-atlas-window .ca-cell.is-target:hover .ca-card { transform: translateY(-6px) scale(1.04); filter: brightness(1.08); }
+.card-atlas-window .ca-cell.is-target:hover .ca-card::after { border-color: var(--ca-gold); box-shadow: 0 0 18px rgba(255, 210, 120, 0.7); }
+@keyframes ca-glow { 50% { opacity: 0.45; } }
+
+.card-atlas-window .ca-table.tool-select .ca-cell,
+.card-atlas-window .ca-table.tool-party .ca-cell { cursor: pointer; }
+.card-atlas-window .ca-table.tool-paint .ca-cell { cursor: crosshair; }
+.card-atlas-window .ca-table.tool-reveal .ca-cell { cursor: cell; }
+.card-atlas-window .ca-cell.is-selected .ca-card::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 10px;
+  border: 3px solid var(--ca-gold);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* trail of visited cards */
+.card-atlas-window .ca-trail { display: none; }
+.card-atlas-window .ca-cell.is-visited:not(.is-party) .ca-trail {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe39a 0 35%, rgba(255, 227, 154, 0.25) 36% 100%);
+  box-shadow: 0 0 6px rgba(255, 220, 140, 0.8);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* corner marks */
+.card-atlas-window .ca-marks {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 3px;
+  z-index: 3;
+  pointer-events: none;
+}
+.card-atlas-window .ca-mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(15, 14, 12, 0.78);
+  color: var(--ca-ink);
+  font-size: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.card-atlas-window button.ca-mark { pointer-events: auto; cursor: pointer; }
+.card-atlas-window button.ca-mark:hover { background: var(--ca-gold); color: #241a0b; }
+.card-atlas-window .ca-mark--hidden { color: #9fb3c8; }
+.card-atlas-window .ca-mark--note { color: #f0d270; }
+.card-atlas-window .ca-mark--text { color: #e8c39a; }
+
+/* ---------- the group's token ---------- */
+.card-atlas-window .ca-pawn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--ca-w);
+  height: var(--ca-h);
+  pointer-events: none;
+  z-index: 6;
+  transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.3, 1);
+}
+.card-atlas-window .ca-pawn[hidden] { display: none; }
+.card-atlas-window .ca-pawn__shadow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 20px;
+  margin: 18px 0 0 -29px;
+  border-radius: 50%;
+  background: radial-gradient(rgba(0, 0, 0, 0.55), transparent 70%);
+}
+.card-atlas-window .ca-pawn__token {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -38px 0 0 -32px;
+  border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(from 210deg, #f6dc8f, #a87a2c, #f3d68a, #8e6421, #f6dc8f);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.55), 0 0 0 2px rgba(40, 26, 8, 0.6);
+  animation: ca-bob 2.6s ease-in-out infinite;
+}
+.card-atlas-window .ca-pawn__img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #2d3b52 center / cover no-repeat;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.35);
+}
+.card-atlas-window .ca-pawn.is-hopping .ca-pawn__token { animation: ca-hop 0.55s cubic-bezier(0.3, 0.7, 0.4, 1); }
+@keyframes ca-bob { 50% { transform: translateY(-4px); } }
+@keyframes ca-hop {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-22px) scale(1.08); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ---------- ping ---------- */
+.card-atlas-window .ca-ping {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 3px solid var(--ca-ping, #ffd76a);
+  pointer-events: none;
+  z-index: 8;
+  animation: ca-ping 1.5s ease-out forwards;
+}
+@keyframes ca-ping {
+  0% { transform: scale(0.4); opacity: 1; }
+  70% { opacity: 0.9; }
+  100% { transform: scale(7); opacity: 0; }
+}
+
+/* ---------- overlays: status, zoom, empty ---------- */
+.card-atlas-window .ca-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 4;
+}
+.card-atlas-window .ca-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(18, 16, 14, 0.82);
+  border: 1px solid rgba(216, 178, 94, 0.35);
+  color: var(--ca-ink);
+  font-size: 12.5px;
+  backdrop-filter: blur(3px);
+}
+.card-atlas-window .ca-chip i { color: var(--ca-gold); }
+.card-atlas-window .ca-chip.ca-out-danger { border-color: var(--ca-danger); }
+.card-atlas-window .ca-chip.ca-out-danger i { color: var(--ca-danger); }
+.card-atlas-window .ca-chip.ca-out-discovery { border-color: var(--ca-discovery); }
+.card-atlas-window .ca-chip.ca-out-discovery i { color: var(--ca-discovery); }
+.card-atlas-window .ca-chip.ca-locked { background: rgba(110, 30, 20, 0.85); border-color: var(--ca-danger); }
+.card-atlas-window .ca-chip.ca-locked i { color: #ffc2b5; }
+.card-atlas-window .ca-chip.ca-pending { border-color: var(--ca-gold); animation: ca-pulse 1.4s ease-in-out infinite; }
+.card-atlas-window .ca-zoom {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 4;
+}
+.card-atlas-window .ca-zoom button { width: 34px; padding: 0; background: rgba(18, 16, 14, 0.82); }
+.card-atlas-window .ca-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 4;
+  color: var(--ca-ink);
+  font-size: 15px;
+  text-align: center;
+  padding: 24px;
+}
+.card-atlas-window .ca-empty[hidden] { display: none; }
+@keyframes ca-pulse { 50% { box-shadow: 0 0 0 4px rgba(216, 178, 94, 0.25); } }
+
+/* ---------- the hand ---------- */
+.card-atlas-window .ca-hand-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  pointer-events: none;
+  max-width: calc(100% - 24px);
+}
+.card-atlas-window .ca-hand-wrap[hidden] { display: none; }
+.card-atlas-window .ca-hand-toggle {
+  pointer-events: auto;
+  margin: 0 0 4px;
+  padding: 3px 12px;
+  height: auto;
+  border: 1px solid rgba(216, 178, 94, 0.45);
+  border-radius: 999px;
+  background: rgba(18, 16, 14, 0.85);
+  color: var(--ca-ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+.card-atlas-window .ca-hand {
+  display: flex;
+  justify-content: center;
+  padding: 0 30px;
+  height: 128px;
+  pointer-events: auto;
+}
+.card-atlas-window .ca-hand-wrap.is-closed .ca-hand { display: none; }
+.card-atlas-window .ca-hcard {
+  position: relative;
+  flex: 0 0 auto;
+  width: 92px;
+  height: 128px;
+  margin: 0 -9px;
+  padding: 24px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  border: 2px solid #c9a75a;
+  border-radius: 9px;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(255, 255, 255, 0.55), transparent 70%),
+    linear-gradient(#f7eed8, #e2d1a8);
+  color: #3a2a17;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transform-origin: 50% 120%;
+  transform: translateY(var(--ca-drop, 8px)) rotate(var(--ca-rot, 0deg));
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.card-atlas-window .ca-hcard:hover,
+.card-atlas-window .ca-hcard:focus-visible {
+  transform: translateY(-14px) rotate(0deg) scale(1.08);
+  z-index: 2;
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.55), 0 0 0 2px var(--ca-gold);
+}
+.card-atlas-window .ca-hcard.is-gm-only { border-color: #7f9bc7; background: linear-gradient(#e9eef7, #c9d4e6); }
+.card-atlas-window .ca-hcard__cost {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  right: 6px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: #3a2a17;
+  color: #f7e6bd;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-atlas-window .ca-hcard__art {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6a5330, #2f2416);
+  color: #f6dc8f;
+  font-size: 19px;
+  box-shadow: inset 0 0 0 2px rgba(246, 220, 143, 0.6);
+}
+.card-atlas-window .ca-hcard__art img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: none; }
+.card-atlas-window .ca-hcard__name {
+  font-family: "Modesto Condensed", "Palatino Linotype", Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .card-atlas-window .ca-card__inner { transition-duration: 0.01ms; }
+  .card-atlas-window .ca-cell.is-flipping .ca-card,
+  .card-atlas-window .ca-pawn__token,
+  .card-atlas-window .ca-cell.is-target .ca-card::after,
+  .card-atlas-window .ca-chip.ca-pending,
+  .card-atlas-window .ca-toolbar button.is-pulse { animation: none; }
+  .card-atlas-window .ca-pawn,
+  .card-atlas-window .ca-stage.is-gliding { transition: none; }
+}
+.card-atlas-window .ca-table.no-anim .ca-card__inner,
+.card-atlas-window .ca-table.no-anim .ca-pawn { transition: none; }
+
+/* ==========================================================================
+   Chat cards
+   ========================================================================== */
+.card-atlas-chat header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-weight: 700;
+  font-size: 1.05em;
+}
+.card-atlas-chat header i,
+.card-atlas-chat header img { color: #a77b22; }
+.card-atlas-chat .ca-opt-img { width: 22px; height: 22px; border: none; border-radius: 50%; object-fit: cover; }
+.card-atlas-chat .ca-cost {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: #3a2a17;
+  color: #f7e6bd;
+  font-size: 0.82em;
+  font-weight: 700;
+  font-style: normal;
+}
+.card-atlas-chat p { margin: 2px 0; }
+.card-atlas-chat .ca-mod { font-size: 0.9em; opacity: 0.85; }
+.card-atlas-chat .ca-outcome { margin: 6px 0 2px; font-size: 1.25em; font-weight: 700; text-align: center; }
+.card-atlas-chat.is-danger .ca-outcome { color: #c4412c; }
+.card-atlas-chat.is-discovery .ca-outcome { color: #2a8a63; }
+.card-atlas-chat .ca-hint { font-size: 0.9em; font-style: italic; }
+.card-atlas-chat .ca-choice { margin: 4px 0; padding: 4px 6px; border-left: 3px solid #c9a75a; background: rgba(201, 167, 90, 0.12); }
+.card-atlas-chat .ca-said { margin: 4px 0; padding: 2px 8px; border-left: 3px solid #8a8a8a; font-style: italic; }
+.card-atlas-chat .ca-rules summary { cursor: pointer; font-size: 0.9em; opacity: 0.8; }
+.card-atlas-chat footer { margin-top: 4px; font-size: 0.8em; opacity: 0.7; text-align: right; }
+.card-atlas-chat .ca-damage { width: 100%; margin: 4px 0; text-align: center; border-collapse: collapse; }
+.card-atlas-chat .ca-damage th,
+.card-atlas-chat .ca-damage td { padding: 1px 4px; border: 1px solid rgba(128, 128, 128, 0.35); }
+
+/* ==========================================================================
+   Dialogs and editors
+   ========================================================================== */
+.card-atlas-dialog .ca-dialog-desc { margin-bottom: 8px; font-size: 0.95em; }
+.card-atlas-dialog .ca-dialog-desc p { margin: 0 0 4px; }
+.card-atlas-dialog .ca-dialog-choices { display: flex; flex-direction: column; gap: 4px; max-height: 50vh; overflow-y: auto; }
+.card-atlas-dialog .ca-dialog-choice { display: flex; align-items: flex-start; gap: 8px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+.card-atlas-dialog .ca-dialog-choice:hover { background: rgba(201, 167, 90, 0.15); }
+.card-atlas-dialog .ca-dialog-choice input { flex: 0 0 auto; margin-top: 3px; }
+.card-atlas-dialog .ca-dialog-choice span { display: flex; flex-direction: column; gap: 1px; }
+.card-atlas-dialog .ca-dialog-choice small { opacity: 0.8; }
+.card-atlas-dialog .ca-cost { font-style: normal; font-weight: 700; color: #a77b22; }
+.card-atlas-dialog .ca-dialog-prompt { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.card-atlas-dialog .ca-dialog-source { margin-top: 6px; font-size: 0.8em; opacity: 0.7; text-align: right; }
+.card-atlas-dialog-app { min-width: 420px; }
+
+.card-atlas-editor .ca-editor-body { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.card-atlas-editor .ca-editor-intro { margin: 0 0 8px; }
+.card-atlas-editor .ca-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
+.card-atlas-editor .ca-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 8px;
+}
+.card-atlas-editor .ca-row.is-disabled { opacity: 0.6; }
+.card-atlas-editor .ca-row-art {
+  flex: 0 0 56px;
+  height: 78px;
+  border-radius: 5px;
+  background: var(--ca-terrain, #6b7a3a) center / cover no-repeat;
+  box-shadow: 0 0 0 2px #efe3c4, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.card-atlas-editor .ca-row-icon { display: grid; place-items: center; height: 56px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #6a5330, #2f2416); color: #f6dc8f; font-size: 22px; }
+.card-atlas-editor .ca-row-icon img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: none; }
+.card-atlas-editor .ca-row-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.card-atlas-editor .ca-row-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.card-atlas-editor .ca-row-line > textarea,
+.card-atlas-editor .ca-row-line > file-picker { flex: 1 1 100%; }
+.card-atlas-editor .ca-row-line > input[type="text"] { flex: 1 1 160px; }
+.card-atlas-editor .ca-name { font-weight: 700; }
+.card-atlas-editor .ca-short { flex: 0 1 110px !important; }
+.card-atlas-editor .ca-mid { flex: 1 1 200px; }
+.card-atlas-editor .ca-row-line select { flex: 0 1 auto; width: auto; }
+.card-atlas-editor input[type="color"] { flex: 0 0 34px; width: 34px; height: 28px; padding: 0; border: none; background: none; }
+.card-atlas-editor .ca-inline { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.card-atlas-editor .ca-field-inline { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.card-atlas-editor .ca-icon-btn { flex: 0 0 30px; width: 30px; height: 28px; padding: 0; }
+.card-atlas-editor .form-footer { margin-top: 8px; }

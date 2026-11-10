@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#57525e"/><stop offset="1" stop-color="#2f2b35"/></linearGradient><linearGradient id="hole" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1620"/><stop offset="1" stop-color="#05040a"/></linearGradient><radialGradient id="glow" cx="0.5" cy="0.5" r="0.6"><stop offset="0" stop-color="#ffb347" stop-opacity="0.55"/><stop offset="1" stop-color="#ff6a23" stop-opacity="0"/></radialGradient><radialGradient id="vig" cx="0.5" cy="0.5" r="0.75"><stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.28"/></radialGradient></defs><rect width="200" height="280" fill="url(#rock)"/>
+    <path d="M0 40 L40 30 L70 46 L120 28 L160 42 L200 34" stroke="#2b2730" stroke-width="3" fill="none" opacity="0.6"/>
+    <path d="M10 90 L50 100 M150 80 L190 92 M20 250 L60 240" stroke="#2b2730" stroke-width="2" opacity="0.5"/>
+    <path d="M40 240 L40 140 Q100 70 160 140 L160 240 Z" fill="#6a6470"/>
+    <path d="M54 240 L54 146 Q100 90 146 146 L146 240 Z" fill="url(#hole)"/>
+    <path d="M60 240 h80 v-8 h-80 Z M66 230 h68 v-8 h-68 Z M72 220 h56 v-8 h-56 Z" fill="#4c4652"/>
+    <rect x="26" y="150" width="6" height="22" fill="#5a3b22"/><path d="M29 150 C 22 140, 28 132, 29 124 C 31 132, 37 140, 29 150 Z" fill="#ffb347"/>
+    <rect x="168" y="150" width="6" height="22" fill="#5a3b22"/><path d="M171 150 C 164 140, 170 132, 171 124 C 173 132, 179 140, 171 150 Z" fill="#ffb347"/>
+    <ellipse cx="29" cy="140" rx="18" ry="18" fill="url(#glow)"/><ellipse cx="171" cy="140" rx="18" ry="18" fill="url(#glow)"/><rect width="200" height="280" fill="url(#vig)"/></svg>

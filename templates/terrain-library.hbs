@@ -1,0 +1,31 @@
+<div class="ca-editor-body">
+  <p class="hint ca-editor-intro">{{localize "CARDATLAS.Terrains.intro"}}</p>
+  <div class="ca-scroll">
+    {{#each rows}}
+    <div class="ca-row ca-terrain-row" data-row="{{@index}}">
+      <div class="ca-row-art" style="background-image:url('{{img}}');--ca-terrain:{{color}}"></div>
+      <div class="ca-row-fields">
+        <div class="ca-row-line">
+          <input type="text" name="terrains.{{@index}}.name" value="{{name}}" aria-label="{{localize 'CARDATLAS.Terrains.name'}}" class="ca-name">
+          <select name="terrains.{{@index}}.threat" aria-label="{{localize 'CARDATLAS.Terrains.threat'}}">{{selectOptions ../threatChoices selected=threat}}</select>
+          <input type="color" name="terrains.{{@index}}.color" value="{{color}}" aria-label="{{localize 'CARDATLAS.Terrains.color'}}">
+          <label class="ca-inline"><input type="checkbox" name="terrains.{{@index}}.passable" {{checked passable}}> {{localize "CARDATLAS.Terrains.passable"}}</label>
+          <label class="ca-inline"><input type="checkbox" name="terrains.{{@index}}.banner" {{checked banner}}> {{localize "CARDATLAS.Terrains.banner"}}</label>
+          <button type="button" class="ca-icon-btn" data-action="deleteRow" data-tooltip="{{localize 'CARDATLAS.Common.delete'}}"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="ca-row-line">
+          <file-picker name="terrains.{{@index}}.img" type="image" value="{{img}}"></file-picker>
+        </div>
+        <div class="ca-row-line">
+          <textarea name="terrains.{{@index}}.description" rows="1" placeholder="{{localize 'CARDATLAS.Terrains.description'}}">{{description}}</textarea>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  <footer class="form-footer">
+    <button type="button" data-action="addRow"><i class="fa-solid fa-plus"></i> {{localize "CARDATLAS.Terrains.add"}}</button>
+    <button type="button" data-action="resetDefaults"><i class="fa-solid fa-rotate-left"></i> {{localize "CARDATLAS.Terrains.reset"}}</button>
+    <button type="submit"><i class="fa-solid fa-floppy-disk"></i> {{localize "CARDATLAS.Common.save"}}</button>
+  </footer>
+</div>

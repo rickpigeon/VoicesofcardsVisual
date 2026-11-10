@@ -1,0 +1,333 @@
+{
+  "CARDATLAS": {
+    "Title": "Atlas de Cartas",
+    "Keybinding": { "open": "Abrir o Atlas de Cartas" },
+    "Threat": { "minimal": "Mínimo", "low": "Baixo", "medium": "Médio", "high": "Alto", "veryHigh": "Muito alto" },
+    "Terrain": {
+      "village": "Aldeia", "city": "Cidade", "camp": "Refúgio", "road": "Estrada", "plains": "Pradaria",
+      "woods": "Bosque", "hills": "Colinas", "river": "Rio", "forest": "Floresta", "mountain": "Montanha",
+      "sea": "Mar aberto", "swamp": "Pântano", "desert": "Deserto", "tundra": "Ermo gélido", "jungle": "Selva",
+      "volcano": "Vulcão", "ruins": "Ruínas", "dungeon": "Masmorra", "treasure": "Tesouro"
+    },
+    "TerrainDesc": {
+      "village": "Assentamento. Dá para descansar em estalagem e reabastecer PI.",
+      "city": "Assentamento grande, com comércio e serviços de viagem.",
+      "camp": "Área protegida: um lugar seguro para descansar nos ermos.",
+      "road": "Estrada patrulhada.",
+      "plains": "Campos abertos e zonas interioranas.",
+      "woods": "Mata rala e trilhas.",
+      "hills": "Terreno ondulado.",
+      "river": "Margens e vaus.",
+      "forest": "Mata fechada.",
+      "mountain": "Picos e passagens estreitas.",
+      "sea": "Exige embarcação. Libere a passagem na carta ou no terreno.",
+      "swamp": "Lama, névoa e criaturas famintas.",
+      "desert": "Areia, sol e pouca água.",
+      "tundra": "Neve e frio intenso.",
+      "jungle": "Vegetação densa e perigosa.",
+      "volcano": "Rocha quente e gases.",
+      "ruins": "Ponto de interesse: restos de algo antigo.",
+      "dungeon": "Ponto de interesse: a entrada de uma masmorra.",
+      "treasure": "Ponto de interesse: algo de valor."
+    },
+    "Cost": {
+      "ip4": "4 PI", "ip3": "3 PI", "ip2": "2 PI", "z5": "5 z", "z10": "10 z", "z20": "20 z", "z40": "40 z",
+      "z10ip": "10 z por PI", "fp1": "1 PF"
+    },
+    "Source": { "house": "Regra da casa" },
+    "Opt": {
+      "rest": {
+        "name": "Descansar",
+        "desc": "O grupo descansa de 4 a 6 horas. Cada PJ recupera todos os PV e PM e se livra de todas as condições.\nNos ermos é preciso uma barraca mágica, a hospitalidade de alguém ou um local seguro; em assentamentos, um quarto de estalagem ou hospitalidade.\nAo fim da cena de descanso, cada PJ pode criar um Laço, somar uma emoção a um Laço ou trocar uma emoção. Ameaças imediatas podem avançar enquanto vocês descansam.",
+        "tent": "Barraca mágica", "tentText": "Criada com 4 PI de um só personagem. Cabe o grupo todo.",
+        "hosp": "Hospitalidade", "hospText": "Alguém amigável acolhe o grupo, em geral em troca de ajuda ou dinheiro.",
+        "safe": "Local seguro", "safeText": "Um lugar sem risco de ataque: templo consagrado, sala secreta, círculo mágico...",
+        "inn1": "Estalagem (aldeia)", "inn1Text": "Por pessoa, por noite.",
+        "inn2": "Estalagem (vila)", "inn2Text": "Por pessoa, por noite.",
+        "inn3": "Estalagem (cidade)", "inn3Text": "Por pessoa, por noite."
+      },
+      "item": {
+        "name": "Usar item de inventário",
+        "desc": "Gaste PI de um único personagem para criar o item na mochila e usá-lo na hora. Nada fica guardado para depois.",
+        "elixir": "Elixir", "elixirText": "Uma criatura recupera 50 PM.",
+        "remedy": "Remédio", "remedyText": "Uma criatura recupera 50 PV.",
+        "tonic": "Tônico", "tonicText": "Uma criatura se recupera de todas as condições.",
+        "shard": "Fragmento elemental", "shardText": "10 de dano de ar, fogo, gelo, raio ou terra em uma criatura que você possa ver.",
+        "tent": "Barraca mágica", "tentText": "Permite que o grupo descanse nos ermos."
+      },
+      "restock": {
+        "name": "Reabastecer PI",
+        "desc": "Em aldeias, vilas e outros lugares com comércio, cada PI recuperado custa 10 zênites. Os PI nunca passam do máximo do personagem e não passam de um personagem para outro.",
+        "prompt": "Quem reabastece e quantos PI?"
+      },
+      "services": {
+        "name": "Serviços de viagem",
+        "desc": "Passagem para viajar por um dia, por pessoa. O preço e a disponibilidade dependem do mundo, e um meio de transporte pode aumentar a distância de um dia de Viagem.",
+        "land": "Terrestre", "landText": "Por pessoa, por dia.",
+        "water": "Aquática", "waterText": "Por pessoa, por dia.",
+        "air": "Aérea", "airText": "Por pessoa, por dia."
+      },
+      "newPlace": {
+        "name": "Novo lugar no mapa",
+        "desc": "Gaste 1 Ponto de Fabula para acrescentar um elemento à história: um lugar novo no mapa (uma aldeia, uma ruína, um atalho...). Descreva-o; o mestre decide como e onde ele aparece.",
+        "prompt": "Descreva o lugar que o grupo encontra:"
+      },
+      "explore": {
+        "name": "Explorar os arredores",
+        "desc": "Regra da casa: o grupo gasta parte do dia examinando a região e vira as cartas a até 2 de distância. Conta como uma carta andada no dia."
+      },
+      "cartography": {
+        "name": "Cartografia",
+        "desc": "Atividade de acampamento (regra opcional). Uma vez antes do próximo descanso, depois de um teste de Viagem do grupo, role de novo e fique com o novo resultado."
+      },
+      "camp": {
+        "name": "Atividade de acampamento",
+        "desc": "Regra opcional. Em cada cena de descanso, cada PJ faz uma das duas atividades que possui e aplica o benefício ao alvo. Benefícios de \"uma vez\" valem até o próximo descanso.",
+        "combat": "Aulas de Combate", "combatText": "Um aliado: uma vez, soma +4 a um teste de Precisão ou de Magia ofensiva.",
+        "magic": "Aulas de Magia", "magicText": "Um aliado: uma vez, lança um feitiço que você conhece, pagando o custo e fazendo os testes.",
+        "carto": "Cartografia", "cartoText": "Você: uma vez, rola de novo um teste de Viagem do grupo e fica com o novo resultado.",
+        "harvest": "Colheita", "harvestText": "Um gourmet: role 1d6. 1: conflito fácil ao fim do descanso; 2: 2 ingredientes aleatórios; 3-5: 3 aleatórios; 6: 3 à escolha.",
+        "owl": "Corujão", "owlText": "Você: gera 3 pontos de progresso para um projeto.",
+        "daydream": "Devaneio", "daydreamText": "Você: uma vez, ao perder PV, perde só a metade.",
+        "exercise": "Exercícios", "exerciseText": "Você: uma vez, evita todas as condições que sofreria de uma mesma fonte.",
+        "scout": "Exploração", "scoutText": "Você ou um aliado: role 1d6. 1: você recupera só metade dos PV e PM; 2: o alvo recupera 2 PI; 3-5: 3 PI; 6: 3 PI e você acha 50 × seu nível em zênites.",
+        "forge": "Forja de Acampamento", "forgeText": "Você: conserta um item do grupo, cria uma arma, armadura ou escudo básico sem pagar, ou desmonta um equipamento em material.",
+        "massage": "Massagem", "massageText": "Um aliado: uma vez, paga metade do custo de PM (não vale para rituais).",
+        "pep": "Mensagem Motivacional", "pepText": "Um aliado: uma vez, dobra os PM que recuperar.",
+        "plan": "Planejamento", "planText": "Um aliado: uma vez, +4 ao liderar um teste em grupo ou ao examinar algo ou alguém.",
+        "double": "Porção Dupla", "doubleText": "Um aliado: uma vez, dobra os PV que recuperar.",
+        "sleep": "Sono Profundo", "sleepText": "Você: uma vez, uma ação extra no seu turno (Equipamento, Impedimento ou Inventário).",
+        "martial": "Treinamento Marcial", "martialText": "Você: uma vez, ao atacar, ganha multi (2) ou +1 no multi."
+      }
+    },
+    "Sample": {
+      "chest": "Um baú antigo, preso entre raízes. Dentro há 300 zênites e um mapa rasgado que aponta para o norte.",
+      "dungeon": "A entrada de uma masmorra esquecida, guardada por estátuas de olhos vazios.",
+      "ruins": "Colunas quebradas de um templo. Alguém acendeu uma fogueira aqui há pouco tempo."
+    },
+    "Settings": {
+      "movePermission": {
+        "name": "Quem move o grupo",
+        "hint": "Os jogadores clicam numa carta vizinha (ou usam as setas) e o mestre conectado valida o passo.",
+        "all": "Qualquer jogador",
+        "gm": "Só o mestre"
+      },
+      "flipSound": { "name": "Som de virar carta", "hint": "Caminho do arquivo de áudio. Deixe vazio para não tocar som." },
+      "volume": { "name": "Volume do som das cartas", "hint": "Vale só para este navegador." },
+      "autoOpen": { "name": "Abrir o mapa quando o mestre mostrar", "hint": "Abre o mapa sozinho quando o mestre clica em Mostrar aos jogadores." }
+    },
+    "Outcome": { "danger": "Perigo!", "discovery": "Descoberta!", "calm": "Viagem tranquila" },
+    "OutcomeHint": {
+      "danger": "O mestre descreve um perigo. O grupo pode evitá-lo com um teste em grupo, uma série de testes ou, raramente, um conflito.",
+      "discovery": "O grupo faz uma descoberta inesperada. Descobertas são sempre boas.",
+      "calm": "Nada de especial acontece neste dia de Viagem."
+    },
+    "Chat": {
+      "travelTitle": "Teste de Viagem: dia {day}",
+      "threatLine": "Ameaça {threat}: {die}",
+      "veteran": "Viajante Experiente: {from} vira {to}",
+      "treasureHunter": "Caçador de Tesouros: descoberta com {max} ou menos",
+      "rerolled": "Rolado de novo (Cartografia): vale o novo resultado",
+      "practical": "Prático: o Andarilho recupera {n} PI.",
+      "dangerTitle": "Perigo: lembrete do mestre",
+      "dangerHow": "O perigo deve poder ser evitado com um teste em grupo ou uma série de testes; raramente vira conflito. Dano pelo nível do grupo (LB p. 108):",
+      "level": "Nível", "dmgWeak": "Fraco", "dmgStrong": "Forte", "dmgIntense": "Intenso",
+      "dangerLocked": "O grupo fica parado até você liberar o movimento (cadeado na barra do mapa).",
+      "dangerFree": "O movimento continua liberado.",
+      "dayEndTitle": "Fim do dia {day} de Viagem",
+      "dayEndText": "Ameaça do dia: {threat}. Role o Teste de Viagem pela barra do mapa quando quiser.",
+      "rules": "Regra"
+    },
+    "Status": {
+      "day": "Dia {day}",
+      "steps": "Cartas no dia: {n}/{max}",
+      "threat": "Ameaça: {threat} ({die})",
+      "last": "Último teste: {total} em {die}, {outcome}",
+      "locked": "Grupo parado",
+      "pending": "Teste pendente do dia {day}"
+    },
+    "Reason": {
+      "noGM": "É preciso um mestre conectado.",
+      "queryFailed": "O mestre não respondeu. Tente de novo.",
+      "locked": "O grupo está parado por um perigo. Espere o mestre liberar.",
+      "notAdjacent": "Escolha uma carta vizinha ao grupo.",
+      "impassable": "Não dá para atravessar esse terreno.",
+      "noCard": "Não há carta nesse espaço.",
+      "noParty": "O grupo não está no mapa.",
+      "gmOnlyMove": "Neste mundo, só o mestre move o grupo.",
+      "notActive": "Esse mapa não está mais ativo.",
+      "noRoll": "Ainda não houve Teste de Viagem.",
+      "noOption": "Essa opção não está disponível.",
+      "gmOnlyOption": "Só o mestre pode usar essa opção.",
+      "noBoard": "Mapa não encontrado.",
+      "notGM": "Pedido recusado.",
+      "noUser": "Pedido recusado.",
+      "unknownAction": "Pedido recusado.",
+      "error": "Algo deu errado. Veja o console (F12)."
+    },
+    "Notify": {
+      "noGM": "É preciso um mestre conectado.",
+      "queryFailed": "O mestre não respondeu. Tente de novo.",
+      "badTable": "Tabela não encontrada: {uuid}",
+      "badMacro": "Macro não encontrada para esta opção.",
+      "badLink": "Documento ligado não encontrado.",
+      "imported": "Mapa importado: {name}",
+      "importFailed": "Arquivo inválido. Use um JSON exportado pelo Atlas de Cartas.",
+      "shown": "Mapa mostrado aos jogadores.",
+      "shownPlayer": "O mestre mostrou um mapa. Abra pelo botão de mapa nos controles de token."
+    },
+    "Hand": { "title": "Opções de viagem", "play": "Usar" },
+    "View": {
+      "zoomIn": "Aproximar (+)",
+      "zoomOut": "Afastar (−)",
+      "center": "Centralizar no grupo (Espaço)",
+      "fit": "Ver o mapa inteiro"
+    },
+    "Empty": {
+      "gm": "Nenhum mapa ainda. Crie o mapa de exemplo para ver tudo funcionando.",
+      "player": "O mestre ainda não mostrou nenhum mapa."
+    },
+    "Toolbar": {
+      "board": "Mapa",
+      "new": "Novo mapa",
+      "configure": "Configurar mapa",
+      "export": "Exportar mapa (JSON)",
+      "import": "Importar mapa (JSON)",
+      "delete": "Excluir mapa",
+      "show": "Mostrar aos jogadores",
+      "shown": "Visível aos jogadores",
+      "peekOn": "Vendo as cartas ocultas. Clique para ver como jogador.",
+      "peekOff": "Vendo como jogador. Clique para ver as cartas ocultas.",
+      "revealAll": "Virar todas para cima",
+      "hideAll": "Virar todas para baixo",
+      "travelRoll": "Rolar Teste de Viagem (encerra o dia)",
+      "unlock": "Liberar o grupo",
+      "lock": "Parar o grupo",
+      "resetTravel": "Zerar a viagem (dia 1, sem rastro)",
+      "terrains": "Biblioteca de terrenos",
+      "options": "Opções de viagem (mão dos jogadores)"
+    },
+    "Tool": {
+      "walk": "Andar (como os jogadores)",
+      "select": "Selecionar e editar carta",
+      "paint": "Pintar terreno (arraste)",
+      "reveal": "Virar ou ocultar cartas (arraste)",
+      "party": "Posicionar o grupo (sem gastar viagem)",
+      "noCard": "Sem carta"
+    },
+    "Cell": {
+      "title": "Carta ({x}, {y})",
+      "empty": "Espaço sem carta.",
+      "create": "Criar carta aqui",
+      "terrain": "Terreno",
+      "revealed": "Virada para cima",
+      "label": "Nome na carta",
+      "img": "Imagem própria",
+      "threat": "Nível de ameaça",
+      "passable": "Atravessável",
+      "default": "Padrão do terreno: {value}",
+      "text": "Mensagem ao chegar",
+      "textHint": "Vai para o chat na primeira vez que o grupo chega aqui.",
+      "link": "Documento ligado (UUID)",
+      "linkHint": "Arraste um diário, cena ou ator para cá",
+      "note": "Nota do mestre",
+      "placeParty": "Pôr o grupo aqui",
+      "ping": "Apontar",
+      "remove": "Remover carta"
+    },
+    "Common": { "yes": "Sim", "no": "Não", "save": "Salvar", "delete": "Excluir", "up": "Subir", "down": "Descer" },
+    "New": {
+      "name": "Nome",
+      "defaultName": "Novo mapa",
+      "kind": "Começar com",
+      "sample": "Mapa de exemplo (16 × 10)",
+      "blank": "Mapa em branco",
+      "cols": "Colunas",
+      "rows": "Linhas",
+      "fill": "Terreno inicial",
+      "hint": "O mapa de exemplo ignora colunas, linhas e terreno inicial.",
+      "create": "Criar"
+    },
+    "Confirm": {
+      "delete": "Excluir o mapa \"{name}\"? Isso não pode ser desfeito.",
+      "hideAll": "Virar todas as cartas para baixo? As cartas ao redor do grupo continuam viradas para cima.",
+      "resetTravel": "Voltar ao dia 1 e apagar o rastro e o último teste?"
+    },
+    "Config": {
+      "title": "Configurar mapa",
+      "modePublic": "Todos",
+      "modeGM": "Só o mestre",
+      "none": "Ninguém tem",
+      "map": "Mapa",
+      "name": "Nome",
+      "size": "Tamanho (colunas × linhas)",
+      "sizeHint": "Aumentar cria cartas de pradaria; diminuir apaga as cartas que ficarem de fora.",
+      "tilt": "Inclinação da mesa",
+      "partyImg": "Imagem do grupo",
+      "backImg": "Verso das cartas",
+      "follow": "Câmera segue o grupo",
+      "exploration": "Exploração",
+      "revealRadius": "Cartas viradas ao redor",
+      "revealRadiusHint": "Depois de cada passo, vira as cartas até esta distância do grupo (0 = só a carta onde o grupo pisa).",
+      "diagonal": "Permitir diagonais",
+      "travel": "Viagem (LB p. 106)",
+      "movesPerDay": "Cartas por dia de Viagem",
+      "movesPerDayHint": "Quantas cartas o grupo anda em um dia de Viagem. O teste usa a maior ameaça entre as cartas do dia.",
+      "autoRoll": "Rolar o Teste de Viagem sozinho",
+      "autoRollHint": "Desligado: ao fim do dia o mestre recebe um aviso e rola pela barra do mapa.",
+      "lockOnDanger": "Perigo para o grupo",
+      "lockOnDangerHint": "Num perigo, o grupo só volta a andar quando o mestre liberar.",
+      "messageMode": "Quem vê o Teste de Viagem",
+      "dangerTable": "Tabela de perigos",
+      "discoveryTable": "Tabela de descobertas",
+      "tablesHint": "Opcional. Arraste uma tabela da barra lateral; ela é sorteada no perigo ou na descoberta.",
+      "wayfarer": "Poderes de Andarilho no grupo",
+      "wayfarerHint": "Marque o que algum PJ tem (LB p. 176-177).",
+      "veteran": "Viajante Experiente (dado um passo menor, mínimo d6)",
+      "treasureHunter": "Caçador de Tesouros (descoberta com NP + 1 ou menos)",
+      "practical": "Prático (lembrete: recupera NP PI após cada teste)"
+    },
+    "Terrains": {
+      "title": "Biblioteca de terrenos",
+      "intro": "Cada terreno define a imagem, o nível de ameaça (o dado do Teste de Viagem) e se dá para atravessar. \"Faixa com nome\" escreve o nome na carta, como nas cidades e nos pontos de interesse.",
+      "newName": "Novo terreno",
+      "name": "Nome",
+      "threat": "Ameaça",
+      "color": "Cor",
+      "passable": "Atravessável",
+      "banner": "Faixa com nome",
+      "description": "Descrição (opcional)",
+      "add": "Novo terreno",
+      "reset": "Voltar ao padrão",
+      "resetConfirm": "Trocar a biblioteca pelos terrenos padrão? Cartas de terrenos apagados ficam sem imagem."
+    },
+    "Options": {
+      "title": "Opções de viagem",
+      "intro": "Cartas que os jogadores têm na mão durante a viagem. \"Anunciar no chat\" só publica a carta; \"Teste de Viagem\", \"Rolar de novo\" e \"Virar cartas\" (valor = raio) são feitas pelo mestre; \"Executar macro\" roda a macro cujo UUID está no valor. \"Gasta carta do dia\" conta como uma carta andada. Escolhas: uma por linha, no formato Nome | custo | efeito.",
+      "newName": "Nova opção",
+      "enabled": "Na mão",
+      "name": "Nome",
+      "cost": "Custo",
+      "action": "Ação",
+      "value": "Valor (raio ou UUID da macro)",
+      "step": "Gasta carta do dia",
+      "gmOnly": "Só mestre",
+      "confirm": "Confirmar antes",
+      "icon": "Ícone (Font Awesome)",
+      "description": "Texto da regra",
+      "choices": "Escolhas: Nome | custo | efeito (uma por linha)",
+      "prompt": "Pergunta ao jogador (opcional)",
+      "source": "Fonte (ex.: LB p. 104)",
+      "add": "Nova opção",
+      "reset": "Voltar ao padrão",
+      "resetConfirm": "Trocar todas as opções pelas padrão?"
+    },
+    "Action": {
+      "chat": "Anunciar no chat",
+      "travelRoll": "Teste de Viagem",
+      "reroll": "Rolar de novo o último teste",
+      "reveal": "Virar cartas ao redor",
+      "macro": "Executar macro"
+    }
+  }
+}

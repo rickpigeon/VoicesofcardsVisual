@@ -1,0 +1,47 @@
+<div class="ca-editor-body">
+  <p class="hint ca-editor-intro">{{localize "CARDATLAS.Options.intro"}}</p>
+  <div class="ca-scroll">
+    {{#each rows}}
+    <div class="ca-row ca-option-row{{#unless enabled}} is-disabled{{/unless}}" data-row="{{@index}}">
+      <div class="ca-row-art ca-row-icon">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}"></i>{{/if}}</div>
+      <div class="ca-row-fields">
+        <div class="ca-row-line">
+          <label class="ca-inline"><input type="checkbox" name="options.{{@index}}.enabled" {{checked enabled}}> {{localize "CARDATLAS.Options.enabled"}}</label>
+          <input type="text" name="options.{{@index}}.name" value="{{name}}" class="ca-name" aria-label="{{localize 'CARDATLAS.Options.name'}}">
+          <input type="text" name="options.{{@index}}.cost" value="{{cost}}" class="ca-short" placeholder="{{localize 'CARDATLAS.Options.cost'}}">
+          <button type="button" class="ca-icon-btn" data-action="moveUp" data-tooltip="{{localize 'CARDATLAS.Common.up'}}"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" class="ca-icon-btn" data-action="moveDown" data-tooltip="{{localize 'CARDATLAS.Common.down'}}"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" class="ca-icon-btn" data-action="deleteRow" data-tooltip="{{localize 'CARDATLAS.Common.delete'}}"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="ca-row-line">
+          <label class="ca-field-inline">{{localize "CARDATLAS.Options.action"}}
+            <select name="options.{{@index}}.action">{{selectOptions ../actionChoices selected=action}}</select></label>
+          <input type="text" name="options.{{@index}}.value" value="{{value}}" class="ca-mid" placeholder="{{localize 'CARDATLAS.Options.value'}}" data-uuid-drop>
+          <label class="ca-inline"><input type="checkbox" name="options.{{@index}}.step" {{checked step}}> {{localize "CARDATLAS.Options.step"}}</label>
+          <label class="ca-inline"><input type="checkbox" name="options.{{@index}}.gmOnly" {{checked gmOnly}}> {{localize "CARDATLAS.Options.gmOnly"}}</label>
+          <label class="ca-inline"><input type="checkbox" name="options.{{@index}}.confirm" {{checked confirm}}> {{localize "CARDATLAS.Options.confirm"}}</label>
+        </div>
+        <div class="ca-row-line">
+          <input type="text" name="options.{{@index}}.icon" value="{{icon}}" class="ca-mid" placeholder="fa-solid fa-star" aria-label="{{localize 'CARDATLAS.Options.icon'}}">
+          <file-picker name="options.{{@index}}.img" type="image" value="{{img}}"></file-picker>
+        </div>
+        <div class="ca-row-line">
+          <textarea name="options.{{@index}}.description" rows="3" placeholder="{{localize 'CARDATLAS.Options.description'}}">{{description}}</textarea>
+        </div>
+        <div class="ca-row-line">
+          <textarea name="options.{{@index}}.choicesText" rows="2" placeholder="{{localize 'CARDATLAS.Options.choices'}}">{{choicesText}}</textarea>
+        </div>
+        <div class="ca-row-line">
+          <input type="text" name="options.{{@index}}.prompt" value="{{prompt}}" placeholder="{{localize 'CARDATLAS.Options.prompt'}}">
+          <input type="text" name="options.{{@index}}.source" value="{{source}}" class="ca-mid" placeholder="{{localize 'CARDATLAS.Options.source'}}">
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  <footer class="form-footer">
+    <button type="button" data-action="addRow"><i class="fa-solid fa-plus"></i> {{localize "CARDATLAS.Options.add"}}</button>
+    <button type="button" data-action="resetDefaults"><i class="fa-solid fa-rotate-left"></i> {{localize "CARDATLAS.Options.reset"}}</button>
+    <button type="submit"><i class="fa-solid fa-floppy-disk"></i> {{localize "CARDATLAS.Common.save"}}</button>
+  </footer>
+</div>
