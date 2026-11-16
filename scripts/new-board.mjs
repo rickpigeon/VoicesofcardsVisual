@@ -3,15 +3,16 @@
  * A plain ApplicationV2 (the same kind of window as the board itself) with its own listeners,
  * so it does not depend on DialogV2.
  */
-import { MODULE_ID, esc, loc, txt } from "./constants.mjs";
+import { MODULE_ID, esc, loc, terrainOptions, txt } from "./constants.mjs";
 import { createBoard, createSampleBoard } from "./defaults.mjs";
 import { revealAround } from "./rules.mjs";
-import { LIMITS, SIZES, THEMES, generateBoard, randomSeed, summarizeBoard } from "./generator.mjs";
+import { LIMITS, SIZES, THEME_GROUPS, generateBoard, randomSeed, summarizeBoard } from "./generator.mjs";
 import { getActiveBoardId, getTerrainMap, getTerrains, saveBoard, setActiveBoard } from "./store.mjs";
 import { reportError } from "./errors.mjs";
 
 const { ApplicationV2 } = foundry.applications.api;
 const SUMMARY_ORDER = ["city", "village", "camp", "dungeon", "ruins", "treasure", "volcano"];
+const SUMMARY_MAX = 10;
 const BLANK_LIMITS = { min: 2, max: 80 };
 
 export class NewBoardApp extends ApplicationV2 {
@@ -69,7 +70,7 @@ export class NewBoardApp extends ApplicationV2 {
             </div>
             <div class="ca-new-field" data-show="generate">
               <label for="ca-new-theme">${esc(loc("New.theme"))}</label>
-              <select id="ca-new-theme" name="theme">${THEMES.map(t => opt(t, loc(`Theme.${t}`), s.theme)).join("")}</select>
+              <select id="ca-new-theme" name="theme">${Object.entries(THEME_GROUPS).map(([g, list]) => `<optgroup label="${esc(loc(`New.theme${g === "classic" ? "Classic" : "Places"}`))}">${list.map(t => opt(t, loc(`Theme.${t}`), s.theme)).join("")}</optgroup>`).join("")}</select>
             </div>
             <p class="ca-new-desc" data-show="generate" data-role="themeDesc"></p>
             <div class="ca-new-field" data-show="generate">
@@ -102,7 +103,7 @@ export class NewBoardApp extends ApplicationV2 {
             <p class="ca-new-hint ca-new-start-hint" data-show="generate blank" data-role="startHint"></p>
             <div class="ca-new-field" data-show="blank">
               <label for="ca-new-fill">${esc(loc("New.fill"))}</label>
-              <select id="ca-new-fill" name="fill">${getTerrains().map(t => opt(t.id, txt(t.name), s.fill)).join("")}</select>
+              <select id="ca-new-fill" name="fill">${terrainOptions(getTerrains(), s.fill)}</select>
             </div>
             <p class="ca-new-desc" data-show="sample">${esc(loc("New.sampleHint"))}</p>
             <p class="ca-new-hint" data-show="generate sample blank">${esc(loc("New.editHint"))}</p>
@@ -295,7 +296,11 @@ export class NewBoardApp extends ApplicationV2 {
   #writeSummary(board, terrains) {
     const el = this.element.querySelector(".ca-new-summary");
     const { counts, start } = summarizeBoard(board);
-    const parts = SUMMARY_ORDER.filter(k => counts[k]).map(k => `${txt(terrains.get(k)?.name ?? k)} ×${counts[k]}`);
+    // The classic points of interest first, then every other place with a banner (most common first).
+    const others = Object.keys(counts).filter(k => !SUMMARY_ORDER.includes(k) && terrains.get(k)?.banner).sort((a, b) => counts[b] - counts[a]);
+    const shown = [...SUMMARY_ORDER.filter(k => counts[k]), ...others];
+    const parts = shown.slice(0, SUMMARY_MAX).map(k => `${txt(terrains.get(k)?.name ?? k)} ×${counts[k]}`);
+    if ( shown.length > SUMMARY_MAX ) parts.push(loc("New.more", { count: shown.length - SUMMARY_MAX }));
     const lines = [`${board.cols} × ${board.rows}${parts.length ? ` · ${parts.join(" · ")}` : ""}`];
     if ( start ) lines.push(loc("New.start", { name: start }));
     el.innerHTML = lines.map(l => `<span>${esc(l)}</span>`).join("");

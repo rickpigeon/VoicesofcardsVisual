@@ -1,8 +1,13 @@
 <div class="ca-editor-body">
   <p class="hint ca-editor-intro">{{localize "CARDATLAS.Terrains.intro"}}</p>
+  <div class="ca-terrain-filter">
+    <label>{{localize "CARDATLAS.Terrains.filter"}}
+      <select data-role="groupFilter">{{#each groupChoices}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+    <input type="search" data-role="textFilter" placeholder="{{localize 'CARDATLAS.Terrains.search'}}" value="{{filterText}}">
+  </div>
   <div class="ca-scroll">
     {{#each rows}}
-    <div class="ca-row ca-terrain-row" data-row="{{@index}}">
+    <div class="ca-row ca-terrain-row" data-row="{{@index}}" data-group="{{groupKey}}">
       <div class="ca-row-art" style="background-image:url('{{img}}');--ca-terrain:{{color}}"></div>
       <div class="ca-row-fields">
         <div class="ca-row-line">

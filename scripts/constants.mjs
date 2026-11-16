@@ -2,6 +2,8 @@
  * Shared constants and tiny helpers. Nothing here touches the database.
  */
 
+import { GROUPS, groupOf } from "./places.mjs";
+
 export const MODULE_ID = "card-atlas";
 export const PATH = `modules/${MODULE_ID}`;
 export const QUERY_NAME = `${MODULE_ID}.request`;
@@ -118,6 +120,19 @@ export function confirmButtons() {
 
 export function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
+}
+
+/** <option>s of terrains in <optgroup>s by group (built-in groups first, then the GM's own). */
+export function terrainOptions(terrains, selected = "") {
+  const by = new Map();
+  for ( const t of terrains ) {
+    const g = groupOf(t);
+    if ( !by.has(g) ) by.set(g, []);
+    by.get(g).push(t);
+  }
+  return [...GROUPS, "custom"].filter(g => by.has(g)).map(g => `<optgroup label="${esc(loc(`Group.${g}`))}">`
+    + by.get(g).map(t => `<option value="${esc(t.id)}"${t.id === selected ? " selected" : ""}>${esc(txt(t.name))}</option>`).join("")
+    + "</optgroup>").join("");
 }
 
 export function esc(value) {

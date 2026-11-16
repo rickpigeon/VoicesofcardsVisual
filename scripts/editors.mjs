@@ -6,6 +6,7 @@ import {
   threatLabel, txt
 } from "./constants.mjs";
 import { MANA_TEXT_MAX, PARTY_FRAMES, PARTY_TOKENS, ROLL_BY, normalizeConfig, resizeBoard } from "./rules.mjs";
+import { GROUPS, groupOf } from "./places.mjs";
 import { defaultOptions } from "./defaults.mjs";
 import { getBoard, getOptions, getTerrains, mutateBoard, saveOptions, saveTerrains } from "./store.mjs";
 import { guardActions, reportError } from "./errors.mjs";
@@ -256,14 +257,36 @@ export class TerrainLibraryApp extends HandlebarsApplicationMixin(ApplicationV2)
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    context.rows = this.rows;
+    context.rows = this.rows.map(r => ({ ...r, groupKey: groupOf(r) }));
     context.threatChoices = threatChoices();
+    const present = new Set(context.rows.map(r => r.groupKey));
+    context.groupChoices = [["all", loc("Group.all")], ...[...GROUPS, "custom"].filter(g => present.has(g)).map(g => [g, loc(`Group.${g}`)])]
+      .map(([value, label]) => ({ value, label, selected: value === (this.filterGroup ?? "all") }));
+    context.filterText = this.filterText ?? "";
     return context;
   }
 
   #capture() {
     const data = readForm(this.element);
     this.rows = toArray(data.terrains).map((r, n) => ({ ...this.rows[n], ...r }));
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const group = this.element.querySelector("[data-role=groupFilter]");
+    const text = this.element.querySelector("[data-role=textFilter]");
+    const apply = () => {
+      this.filterGroup = group.value;
+      this.filterText = text.value;
+      const q = text.value.trim().toLowerCase();
+      for ( const row of this.element.querySelectorAll(".ca-terrain-row") ) {
+        const name = String(row.querySelector(".ca-name")?.value ?? "").toLowerCase();
+        row.hidden = (group.value !== "all" && row.dataset.group !== group.value) || (q && !name.includes(q));
+      }
+    };
+    group?.addEventListener("change", apply);
+    text?.addEventListener("input", apply);
+    if ( group && text ) apply();
   }
 
   /** @this {TerrainLibraryApp} */
@@ -305,7 +328,8 @@ export class TerrainLibraryApp extends HandlebarsApplicationMixin(ApplicationV2)
       threat: THREAT_KEYS.includes(r.threat) ? r.threat : "medium",
       passable: !!r.passable,
       banner: !!r.banner,
-      description: String(r.description ?? "").trim()
+      description: String(r.description ?? "").trim(),
+      ...(this.rows[n]?.group ? { group: this.rows[n].group } : {})
     }));
     await saveTerrains(rows);
   }

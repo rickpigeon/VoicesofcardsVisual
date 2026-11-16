@@ -4,8 +4,9 @@
  */
 import {
   ELEMENTS, ELEMENT_KEYS, MODULE_ID, PATH, SOCKET_NAME, THREAT_DIE, THREAT_KEYS, confirmButtons, elementLabel, esc, loc,
-  manaMessage, threatLabel, txt
+  manaMessage, terrainOptions, threatLabel, txt
 } from "./constants.mjs";
+import { GROUPS, groupOf } from "./places.mjs";
 import { BoardView } from "./board-view.mjs";
 import { MANA_TEXT_MAX, PARTY_TOKENS, cellAt, cellThreat, coords, normalizeBoard, travelDie } from "./rules.mjs";
 import { canRoll, rollTravelNow, usesLookfar } from "./travel.mjs";
@@ -139,6 +140,12 @@ export class BoardApp extends ApplicationV2 {
   async _onRender(context, options) {
     await super._onRender(context, options);
     this.#bindActions();
+    // The palette shows one group of terrains at a time (there are more than a hundred).
+    this.element.querySelector(".ca-palette")?.addEventListener("change", ev => {
+      if ( !ev.target.matches(".ca-palette-group") ) return;
+      this.paletteGroup = ev.target.value;
+      this.#renderPalette();
+    });
     this.view?.destroy();
     const table = this.element.querySelector(".ca-table");
     this.view = new BoardView(table, {
@@ -338,7 +345,16 @@ export class BoardApp extends ApplicationV2 {
     if ( !el ) return;
     el.hidden = this.tool !== "paint";
     if ( el.hidden ) return;
-    const chips = getTerrains().map(t => `
+    const all = getTerrains();
+    // The GM's own terrains come right after "all", so they are easy to find.
+    const groups = ["custom", ...GROUPS].filter(g => all.some(t => groupOf(t) === g));
+    // The group shown: the one picked, else the brush's, else the basic terrains.
+    const brushTerrain = all.find(t => t.id === this.brush);
+    const group = this.paletteGroup ?? (brushTerrain ? groupOf(brushTerrain) : "basic");
+    const list = group === "all" ? all : all.filter(t => groupOf(t) === group);
+    const groupSelect = `<select class="ca-palette-group" aria-label="${esc(loc("Tool.paletteGroup"))}" data-tooltip="${esc(loc("Tool.paletteGroup"))}">`
+      + ["all", ...groups].map(g => `<option value="${g}"${g === group ? " selected" : ""}>${esc(loc(`Group.${g}`))}</option>`).join("") + "</select>";
+    const chips = list.map(t => `
       <button type="button" class="ca-chip-terrain${this.brush === t.id ? " is-on" : ""}" data-action="brush" data-brush="${esc(t.id)}" data-tooltip="${esc(txt(t.name))}">
         <span class="ca-swatch" style="background-image:url('${esc(t.img)}');--ca-terrain:${esc(t.color || "#777")}"></span>
         <span>${esc(txt(t.name))}</span>
@@ -349,7 +365,7 @@ export class BoardApp extends ApplicationV2 {
         <span class="ca-swatch ca-swatch-mana"><i class="${ELEMENTS[k].icon}"></i></span>
         <span>${esc(elementLabel(k))}</span>
       </button>`).join("");
-    el.innerHTML = `<div class="ca-palette-row">${chips}<button type="button" class="ca-chip-terrain is-eraser${this.brush === "__empty" ? " is-on" : ""}" data-action="brush" data-brush="__empty">
+    el.innerHTML = `<div class="ca-palette-row">${groupSelect}${chips}<button type="button" class="ca-chip-terrain is-eraser${this.brush === "__empty" ? " is-on" : ""}" data-action="brush" data-brush="__empty">
       <span class="ca-swatch"><i class="fa-solid fa-eraser"></i></span><span>${esc(loc("Tool.noCard"))}</span></button></div>
       <div class="ca-palette-row ca-palette-mana"><span class="ca-palette-label"><i class="fa-solid fa-wand-sparkles"></i> ${esc(loc("Mana.title"))}</span>${mana}
       <button type="button" class="ca-chip-terrain is-eraser${this.brush === "mana:none" ? " is-on" : ""}" data-action="brush" data-brush="mana:none">
@@ -380,7 +396,7 @@ export class BoardApp extends ApplicationV2 {
     el.innerHTML = `
       <h3>${esc(loc("Cell.title", { x: x + 1, y: y + 1 }))}</h3>
       <div class="ca-field"><label>${esc(loc("Cell.terrain"))}</label>
-        <select name="terrain">${getTerrains().map(t => opt(t.id, txt(t.name))).join("")}</select></div>
+        <select name="terrain">${terrainOptions(getTerrains())}</select></div>
       <div class="ca-field ca-check"><label><input type="checkbox" name="revealed"> ${esc(loc("Cell.revealed"))}</label></div>
       <div class="ca-field"><label>${esc(loc("Cell.label"))}</label><input type="text" name="label"></div>
       <div class="ca-field ca-img"><label>${esc(loc("Cell.img"))}</label></div>

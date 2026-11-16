@@ -6,11 +6,11 @@ Módulo para **Foundry VTT v13 e v14**: um mapa de exploração feito de cartas 
 - Ficha do grupo andando de carta em carta, com rastro dos lugares visitados.
 - **Teste de Viagem** de Fabula Ultima por dia de viagem (LB p. 106-109): dado pela maior ameaça do dia (d6 a d20), perigo com 6+, descoberta com 1, poderes do Andarilho (Viajante Experiente, Caçador de Tesouros, Prático).
 - Mão de opções de viagem: Descansar, Usar item de inventário (PI), Reabastecer PI, Serviços de viagem, Novo lugar no mapa (1 PF) e, opcionais, Explorar os arredores (regra da casa), Cartografia e Atividades de acampamento (Atlas Natural Fantasy).
-- **Gerador de mapas** com 5 temas, tamanhos, ponto de partida à escolha e um código que recria o mesmo mapa.
+- **Gerador de mapas** com 12 temas (5 mundos clássicos e 7 de lugares: reino, maravilhas naturais, jornada do herói, reinos místicos, era das máquinas, metrópole e masmorra), tamanhos, ponto de partida à escolha e um código que recria o mesmo mapa.
 - **Teste de Viagem** automático, pelo mestre ou pelos **jogadores**, com integração opcional com o módulo **Lookfar**.
 - **Token do grupo** personalizável: 6 tokens prontos, imagem própria ou o token de um ator.
 - **Mana latente:** áreas energizadas por um elemento (ar, raio, trevas, terra, fogo, gelo, luz, veneno), com efeitos animados.
-- Biblioteca de terrenos (19 prontos, com arte própria) e opções 100% editáveis. Mapas exportam e importam em JSON.
+- Biblioteca de terrenos (124 prontos, com arte própria, em 8 grupos) e opções 100% editáveis. Mapas exportam e importam em JSON.
 - Português (Brasil) e inglês.
 
 ## Instalar
@@ -58,7 +58,7 @@ Ferramentas da barra:
 |---|---|
 | Andar | Move o grupo como os jogadores (conta a viagem). |
 | Selecionar | Clique numa carta para editar no painel lateral: terreno, virada ou não, nome, imagem própria, ameaça, se dá para atravessar, mensagem ao chegar, documento ligado (arraste um diário, cena ou ator) e nota do mestre. |
-| Pintar | Escolha um terreno na paleta e arraste sobre as cartas. "Sem carta" deixa o espaço vazio. A segunda linha da paleta pinta **mana latente** (veja abaixo). |
+| Pintar | Escolha um terreno na paleta e arraste sobre as cartas. A paleta mostra um grupo de terrenos por vez: troque no seletor do começo da paleta (Todos, Seus terrenos, Básicos, Cidades, Natureza, Masmorras, Magia, Tecnologia, Social, Progressão). "Sem carta" deixa o espaço vazio. A segunda linha da paleta pinta **mana latente** (veja abaixo). |
 | Virar/ocultar | Clique ou arraste para virar cartas para cima ou para baixo. |
 | Posicionar o grupo | Coloca o grupo em qualquer carta, sem gastar viagem. |
 | Olho | Alterna entre ver as cartas ocultas (com véu listrado) e ver como os jogadores veem. |
@@ -145,12 +145,38 @@ Em **Novo mapa → Gerar mapa**:
 | Deserto | Areia, oásis, serras rochosas e mais ruínas. |
 | Terras geladas | Ermos gelados, florestas de pinheiros e mar frio ao norte. Poucas aldeias. |
 | Floresta selvagem | Mata fechada, selva ao sul, pântanos e muitos rios. Poucas aldeias. |
+| Reino próspero | A capital com distrito nobre e bairro pobre ao lado, cidades portuárias, mercantis (nos rios), subterrâneas (nas montanhas), acadêmica, sagrada, industrial e sobre ruínas, vilas de pescadores, rurais, tribais e amuralhadas na fronteira, uma cidade flutuante sobre o mar, uma cidade abandonada e uma fortaleza militar. As masmorras combinam com o terreno (mina na montanha, cemitério no pântano, templo na mata…). |
+| Maravilhas naturais | Florestas encantadas e sombrias, bosques de fadas, planícies vastas, campos floridos, pântanos venenosos, montanhas nevadas, cânions, cachoeiras nos rios, lagos cristalinos, praias, ilhas isoladas, oásis, caverna de cristais e vale dos dragões. |
+| Jornada do herói | Um mundo para progredir: a primeira dungeon perto do início; as dungeons do fogo (perto do vulcão), da água, da terra e do ar no meio do caminho; gelo e veneno mais adiante; luz e trevas mais longe; depois a torre de desafios, o labirinto final, a fortaleza do vilão e, na carta mais distante, a última dungeon. |
+| Reinos místicos | Plano astral, dimensão dos sonhos, floresta petrificada, mundo invertido, reino dos mortos, florestas encantadas e bosques de fadas, sobre um **mar de estrelas** com pontes que dá para atravessar. Reino das fadas, santuários dos espíritos, jardim celestial, árvore colossal, cristal primordial, portais, ilha temporal, abismo demoníaco e masmorra dimensional. |
+| Era das máquinas | Cidade steampunk, estações ferroviárias, cidades industriais, fábricas, central de energia, laboratório, complexo militar, ferro-velho, plataforma petrolífera no mar, instalação de armas mágicas, nave espacial caída, uma cidade cyberpunk e, bem longe, a base espacial e a colônia em outro planeta. |
+| Metrópole | Uma cidade inteira: avenidas, quarteirões, distritos nobres no centro e bairros pobres na periferia, às vezes um rio e um porto, e os lugares sociais (guildas, academia de magia, universidade, quartel, arena, coliseu, mercado, tavernas, estalagens, restaurante, cassino, teatro, museu, banhos termais e a sede religiosa). O grupo começa numa estalagem (ou no mercado, com *Na cidade*). |
+| Masmorra | Salas (alas), corredores e celas, com rocha sólida (sem carta) em volta. A entrada fica embaixo; mais fundo, catacumbas, prisão, laboratório alquímico, biblioteca proibida, santuário elemental, às vezes uma masmorra dimensional e, no ponto mais fundo, a cripta real. Tesouros nos becos sem saída. |
+
+Os cinco temas clássicos continuam gerando exatamente os mesmos mapas para o mesmo código.
 
 - **Tamanho:** Pequeno (12 × 8), Médio (16 × 10), Grande (22 × 14), Enorme (30 × 18) ou Personalizado (6 a 40 cartas por lado).
 - **Código do mapa:** o mesmo código, tema e tamanho geram sempre o mesmo mapa. *Sortear outro* troca o código. Anote o código de um mapa de que gostou para recriá-lo em outro mundo.
 - **O que vem no mapa:** cidade, aldeias com nome, estradas, rios, refúgios, masmorras, ruínas e tesouros. Masmorras, ruínas e tesouros já têm uma mensagem de chegada. Todas as aldeias, masmorras e tesouros são alcançáveis a partir do ponto de partida.
 - **Início do grupo:** numa aldeia sorteada, na cidade, ou **na carta escolhida**: clique numa carta da prévia. A carta escolhida vira uma aldeia (desmarque *Fundar uma aldeia* para manter o terreno). Se ela cair no mar ou numa ilhota isolada, o início vai para a terra firme mais próxima. No mapa em branco, o clique na prévia também escolhe o início.
 - Depois de criado, o mapa é um mapa comum: dá para pintar, renomear, trocar imagens e mover o grupo.
+
+## Terrenos prontos
+
+A biblioteca tem 124 terrenos em 8 grupos, cada um com arte própria, nível de ameaça e cor:
+
+- **Básicos (19):** aldeia, cidade, refúgio, estrada, pradaria, bosque, colinas, rio, floresta, montanha, mar aberto, pântano, deserto, ermo gélido, selva, vulcão, ruínas, masmorra e tesouro.
+- **Cidades e áreas habitadas (16):** capital do reino, vila rural, cidade portuária, cidade mercantil, cidade subterrânea, cidade flutuante, vila de pescadores, aldeia tribal, cidade industrial, cidade acadêmica, cidade sagrada, cidade abandonada, distrito nobre, bairro pobre / favela, cidade sobre ruínas e vila amuralhada.
+- **Áreas naturais (15):** floresta encantada, floresta sombria, bosque de fadas, planícies vastas, campos floridos, pântano venenoso, oásis, montanhas nevadas, cânion, cachoeiras, lago cristalino, praia tropical, ilha isolada, caverna de cristais e vale dos dragões. Deserto, vulcão e selva já existiam entre os básicos.
+- **Masmorras e exploração (19):** ala, cela e corredor da masmorra, mina abandonada, catacumbas, cripta real, ruínas de uma civilização antiga, templo esquecido, torre de magos, castelo tomado por monstros, prisão subterrânea, laboratório alquímico, biblioteca proibida, santuário elemental, masmorra dimensional, nave espacial abandonada, fortaleza militar, cemitério amaldiçoado e cidade soterrada.
+- **Mágicas e sobrenaturais (14):** reino das fadas, plano astral, dimensão dos sonhos, floresta petrificada, mar de estrelas (não dá para atravessar sem ponte), reino dos mortos, árvore colossal, jardim celestial, abismo demoníaco, mundo invertido, ilha temporal, cristal primordial, santuário dos espíritos e portal entre dimensões.
+- **Tecnológicas e industriais (12):** fábrica automatizada, cidade steampunk, estação ferroviária, laboratório de pesquisa, central de energia, complexo militar, plataforma petrolífera, ferro-velho de máquinas, cidade cyberpunk, base espacial, colônia em outro planeta e instalação de armas mágicas.
+- **Sociais e de serviço (16):** guilda de aventureiros, guilda de mercadores, academia de magia, universidade, quartel militar, arena de combate, coliseu, mercado central, taverna, estalagem, restaurante, cassino, teatro, museu, banhos termais e sede de uma ordem religiosa.
+- **Progressão (13):** primeira dungeon, dungeons do fogo, da água, da terra e do ar, de gelo, de veneno, da luz e das trevas, torre de desafios, labirinto final, fortaleza do vilão e última dungeon.
+
+A **Biblioteca de terrenos** tem um filtro por grupo e uma busca por nome. No painel da carta e na lista de preenchimento do mapa em branco, os terrenos aparecem separados por grupo.
+
+**Mundos com biblioteca já salva:** se você já tinha editado a biblioteca de terrenos, os terrenos novos de uma versão são acrescentados a ela uma vez, quando o mestre entra no mundo (um aviso mostra quantos). Seus nomes e cores ficam como estão, e um terreno que você apagar depois não volta.
 
 ## Regras de Fabula Ultima usadas
 

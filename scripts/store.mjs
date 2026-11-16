@@ -17,6 +17,8 @@ export function registerSettings() {
   hidden("boards", Object, {});
   hidden("activeBoard", String, "");
   hidden("terrains", Object, {});
+  // Ids of the built-in terrains already offered to this world (so a deleted one is not re-added).
+  hidden("terrainsOffered", Object, {});
   hidden("options", Object, {});
 
   game.settings.register(MODULE_ID, "movePermission", {
@@ -89,6 +91,31 @@ function readList(key) {
 export function getTerrains() {
   const stored = readList("terrains");
   return stored?.length ? stored : defaultTerrains();
+}
+
+/**
+ * A world that saved its own terrain library before a version added built-in terrains gets the
+ * new ones appended once (active GM). Terrains the GM deleted on purpose stay deleted.
+ * Returns how many were added.
+ */
+export async function offerNewTerrains() {
+  const defaults = defaultTerrains();
+  const stored = readList("terrains");
+  const offeredRaw = game.settings.get(MODULE_ID, "terrainsOffered");
+  const offered = new Set(Array.isArray(offeredRaw?.list) ? offeredRaw.list : []);
+  const first = !offered.size;
+  let added = 0;
+  if ( stored?.length ) {
+    const have = new Set(stored.map(t => t?.id));
+    /* the 19 terrains of 1.0 were always there: only later ones are offered */
+    const fresh = defaults.filter(t => !have.has(t.id) && !offered.has(t.id) && !(first && t.group === "basic"));
+    if ( fresh.length ) {
+      await game.settings.set(MODULE_ID, "terrains", { list: [...stored, ...fresh] });
+      added = fresh.length;
+    }
+  }
+  if ( defaults.some(t => !offered.has(t.id)) ) await game.settings.set(MODULE_ID, "terrainsOffered", { list: defaults.map(t => t.id) });
+  return added;
 }
 
 export function getTerrainMap() {

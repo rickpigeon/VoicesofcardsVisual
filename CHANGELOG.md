@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.3.0
+
+- **105 terrenos novos, com arte própria** (124 no total), em grupos: cidades e áreas habitadas, áreas naturais, masmorras e exploração, mágicas e sobrenaturais, tecnológicas e industriais, sociais e de serviço, e progressão (as dungeons da jornada do herói).
+- **7 temas novos no gerador de mapas:**
+  - **Reino próspero:** capital com distritos, cidades de vários tipos conforme o lugar (porto na costa, mercantil no rio, subterrânea na montanha…), cidade flutuante, vila amuralhada na fronteira.
+  - **Maravilhas naturais:** florestas encantadas e sombrias, cachoeiras, lagos cristalinos, praias, ilhas, oásis, caverna de cristais, vale dos dragões.
+  - **Jornada do herói:** dungeons de progressão espalhadas pela distância do início, da primeira à última.
+  - **Reinos místicos:** planos mágicos sobre um mar de estrelas com pontes.
+  - **Era das máquinas:** steampunk, ferrovias, fábricas, cidade cyberpunk, base espacial e colônia em outro planeta.
+  - **Metrópole:** uma cidade inteira com avenidas, distritos e os lugares sociais.
+  - **Masmorra:** salas, corredores e celas cercados de rocha, da entrada à cripta real.
+- Os 5 temas clássicos continuam gerando os mesmos mapas para o mesmo código.
+- **Paleta por grupo:** a ferramenta Pintar mostra um grupo de terrenos por vez, com um seletor no começo da paleta.
+- **Listas agrupadas:** o terreno no painel da carta e o preenchimento do mapa em branco usam grupos.
+- **Biblioteca de terrenos:** filtro por grupo e busca por nome.
+- **Bibliotecas já salvas recebem os terrenos novos** uma vez, com um aviso; os terrenos apagados de propósito não voltam.
+- A janela *Novo mapa* agrupa os temas e o resumo da prévia mostra os lugares do tema.
+
 ## 1.2.0
 
 - **Veneno cor-de-rosa:** a mana latente de veneno agora usa `#D670A0` no brilho, no ícone, nas bolhas, no pincel da paleta e na linha do chat.

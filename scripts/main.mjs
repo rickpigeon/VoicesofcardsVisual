@@ -2,7 +2,7 @@
  * Atlas de Cartas / Card Atlas: entry point.
  */
 import { MODULE_ID, QUERY_NAME, SOCKET_NAME, loc } from "./constants.mjs";
-import { getActiveBoardId, registerSettings } from "./store.mjs";
+import { getActiveBoardId, offerNewTerrains, registerSettings } from "./store.mjs";
 import { handleQuery } from "./engine.mjs";
 import { BoardApp } from "./board-app.mjs";
 import { watchUncaught } from "./errors.mjs";
@@ -32,6 +32,12 @@ Hooks.once("ready", () => {
   const module = game.modules.get(MODULE_ID);
   // api.rollTravel(boardId): the same as the "Rolar" button (for macros).
   if ( module ) module.api = { open: openBoard, BoardApp, rollTravel: rollTravelNow };
+  // New built-in terrains reach worlds that saved their own library (once, by the active GM).
+  if ( game.users.activeGM?.isSelf ) {
+    offerNewTerrains().then(n => {
+      if ( n ) ui.notifications.info(loc("Notify.newTerrains", { count: n }));
+    }).catch(err => console.error(`${MODULE_ID} | new terrains`, err));
+  }
 });
 
 /** Every client re-syncs its window when the stored data changes. */

@@ -4,6 +4,7 @@
  * until the GM edits them.
  */
 import { PATH } from "./constants.mjs";
+import { PLACES } from "./places.mjs";
 import { defaultConfig, defaultTravel, revealAround } from "./rules.mjs";
 
 const K = "CARDATLAS.";
@@ -18,12 +19,20 @@ function terrain(id, threat, extra = {}) {
     banner: false,
     color: "#6b7a3a",
     description: `${K}TerrainDesc.${id}`,
+    group: "basic",
     ...extra
   };
 }
 
-/** Example areas from the threat table (Livro Básico p. 107) plus points of interest. */
+/**
+ * Example areas from the threat table (Livro Básico p. 107) plus points of interest, then the
+ * places of 1.3.0 (cities, natural wonders, dungeons, magic, machines, social places, journey).
+ */
 export function defaultTerrains() {
+  return [...basicTerrains(), ...PLACES.map(p => terrain(p.id, p.threat, { color: p.color, banner: p.banner, passable: p.passable, group: p.group }))];
+}
+
+function basicTerrains() {
   return [
     terrain("village", "minimal", { banner: true, color: "#9c6b3c" }),
     terrain("city", "minimal", { banner: true, color: "#7b5a8a" }),
